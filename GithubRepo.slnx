@@ -1,4 +1,7 @@
 <Solution>
   <Project Path="Class02.Homework/Class02.Homework.csproj" Id="ab9450ef-415d-432d-9893-38592a46193f" />
+  <Project Path="Class02.HomeworkPart2/Class02.HomeworkPart2Task1.csproj" Id="c997c351-191a-4115-a635-d45866ab8f66" />
+  <Project Path="Class02HomeworkPart2Taks2/Class02HomeworkPart2Taks2.csproj" Id="ffbc812e-dbc2-4755-a600-797ba8a2fcc9" />
+  <Project Path="Class02HomeworkPart2Task3/Class02HomeworkPart2Task3.csproj" Id="f8d7cffd-790a-467f-8cd4-f7088c95d0a9" />
   <Project Path="GithubRepo.Console/GithubRepo.Console.csproj" />
 </Solution>
