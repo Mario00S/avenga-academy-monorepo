@@ -17,3 +17,16 @@ bool firstInputNumber = int.TryParse(Console.ReadLine(), out int firstIntNumber)
 Console.WriteLine("Please enter the second number");
 bool secondInputNumber = int.TryParse(Console.ReadLine(), out int secondIntNumber);
 
+Console.WriteLine("Before swapping, the first number was: " + firstIntNumber + " the second: " + secondIntNumber);
+
+//solution #1
+//int temp = firstIntNumber;
+//firstIntNumber = secondIntNumber;
+//secondIntNumber = temp;
+//Console.ReadLine();
+//Console.WriteLine("After Swapping the first number is: " + firstIntNumber + " the second: " + secondIntNumber);
+
+//solution #2 - cleaner approach
+(firstIntNumber, secondIntNumber) = (secondIntNumber, firstIntNumber);
+Console.ReadLine();
+Console.WriteLine("After Swapping the first number is: " + firstIntNumber + " the second: " + secondIntNumber);
