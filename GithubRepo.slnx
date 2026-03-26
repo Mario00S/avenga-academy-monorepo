@@ -6,6 +6,7 @@
   <Project Path="Class03.HomeworkPart01/Class03.HomeworkPart01.csproj" Id="dc795249-a32c-4655-abc9-37b1a051394b" />
   <Project Path="Class03.HomeworkPart02/Class03.HomeworkPart02.csproj" Id="76327acf-cd41-4e27-81fe-6d2c8709a42b" />
   <Project Path="Class04.Homework/Class04.Homework.csproj" Id="8540e88b-a806-4006-aa6a-2e582a4171e3" />
+  <Project Path="Class05.Homework/Class05.Homework.csproj" Id="1342194b-33b6-4eb4-b4bd-55ce7909fd9c" />
   <Project Path="ExtraPracticeSpace01/ExtraPracticeSpace01.csproj" Id="8b9b4598-16fa-477b-a46d-277ecbe94d50" />
   <Project Path="GithubRepo.Console/GithubRepo.Console.csproj" />
 </Solution>
