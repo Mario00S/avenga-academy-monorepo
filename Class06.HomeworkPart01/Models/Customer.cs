@@ -46,6 +46,7 @@
         public double Withdraw(double withdrawSum)
         {
         double withdrawnBalance = Balance - withdrawSum;
+            
 
                 if (withdrawSum > 0 && withdrawSum <= Balance)
                 {
@@ -60,6 +61,23 @@
             return Balance;
         }
 
+
+        public double Deposit(double insertDeposit)
+        {
+            double depositedBalance = Balance + insertDeposit;
+            
+
+            if (insertDeposit > 0 && insertDeposit < 2147483647)
+            {
+                Balance = depositedBalance;
+            }
+            else
+            {
+                Console.WriteLine("Please insert a sum larger than 0 and smaller than 2147483647");
+            }
+
+            return Balance;
+        }
 
 
     }

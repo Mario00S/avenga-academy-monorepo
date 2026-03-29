@@ -158,11 +158,14 @@ void Menu(Customer authenticatedCustomer)
                 Console.WriteLine($"Your balance is: {authenticatedCustomer.getBalance()}");
                 break;
             case 2:
+                Console.WriteLine("Insert a sum that you want to withdraw: ");
                 bool withdrawTemp = double.TryParse(Console.ReadLine(), out double withdrawDoubleValue);
                 Console.WriteLine($"You current balance is: {authenticatedCustomer.Withdraw(withdrawDoubleValue)} ");
                 break;
             case 3:
-                //Deposit method
+                Console.WriteLine("Insert a sum that you want to deposit: ");
+                bool depositTemp = double.TryParse(Console.ReadLine(), out double depositDoubleValue);
+                Console.WriteLine($"Your current Balance is: {authenticatedCustomer.Deposit(depositDoubleValue)}");
                 break;
             case 4:
                 showMenu = false;
