@@ -9,6 +9,8 @@
   <Project Path="Class05.Homework/Class05.Homework.csproj" Id="1342194b-33b6-4eb4-b4bd-55ce7909fd9c" />
   <Project Path="Class05.HomeworkPart02/Class05.HomeworkPart02.csproj" Id="c1dc7ce8-bc07-484f-a990-fc912f14c1eb" />
   <Project Path="Class06.HomeworkPart01/Class06.HomeworkPart01.csproj" Id="9c2a2c67-0915-4578-b084-ad5ffaa11bf2" />
+  <Project Path="Class07.Homework01/Class07.Homework01.csproj" Id="31812425-d6d2-4239-aa7c-7ba8dc86579b" />
+  <Project Path="Employee/EmployeeManagement.Library.csproj" Id="3fe88eb3-52ea-4660-8a08-25decfeeb8d1" />
   <Project Path="ExtraPracticeSpace01/ExtraPracticeSpace01.csproj" Id="8b9b4598-16fa-477b-a46d-277ecbe94d50" />
   <Project Path="GithubRepo.Console/GithubRepo.Console.csproj" />
 </Solution>
