@@ -1,4 +1,7 @@
-﻿//using static System.Net.WebRequestMethods;
+﻿using Class08.Homework.Enums;
+using Class08.Homework.Models;
+
+#region exercise 1 requirements
 
 //EXERCISE 1
 //Create a class Song with:
@@ -19,8 +22,24 @@
 //Prints all titles of favorite songs
 //Or prints a message that the person hates music if the list is empty
 
-using Class08.Homework.Enums;
-using Class08.Homework.Models;
+#endregion
+
+#region exercise 2 requiremens
+
+//EXERCISE 2
+//Select the person Jerry and add all the songs which start with the letter B. - done
+
+//Select the person Maria and add all the songs with length longer than 6 min.
+
+//Select the person Jane and add all the songs that are of genre Rock.
+
+//Select the person Stefan and add all songs shorter than 3 min and of genre Hip-Hop.
+
+//Select all persons from the persons array that have 4 or more songs.
+
+#endregion
+
+
 
 List<Song> songs = new List<Song>()
 {
@@ -130,11 +149,68 @@ Person[] persons = new Person[]
 };
 
 //Test output
-var firstPerson = persons[0];
+//var testPerson = persons[0];
+//testPerson.GetFavSongs();
 
+Console.WriteLine("Complete list of favorite songs of the people logged in the DB:");
+Console.WriteLine("=============================================");
 foreach (var person in persons)
 {
     person.GetFavSongs();
 }
 
-firstPerson.GetFavSongs();
+
+Console.WriteLine("Exercise #2:");
+Console.WriteLine("=============================================");
+//Select the person Jerry and add all the songs which start with the letter B
+var selectSongsThatStartWihB = songs.Where(x => x.Title.Length > 0 && x.Title[0] == 'B');
+var selectJerry = persons.Where(x => x.FirstName == "Jerry").First();
+
+foreach (var startsWithB in selectSongsThatStartWihB)
+{
+    
+    selectJerry.FavoriteSongs.Add(startsWithB);
+
+}
+selectJerry.GetFavSongs();
+
+//Select the person Maria and add all the songs with length longer than 6 min.
+var selectMaria = persons.Where(x => x.FirstName == "Maria").First();
+var songsLongerThan6Min = songs.Where(x => x.Length > 6);
+foreach (var longerThan6 in songsLongerThan6Min)
+{
+    selectMaria.FavoriteSongs.Add(longerThan6);
+}
+selectMaria.GetFavSongs();
+
+//Select the person Jane and add all the songs that are of genre Rock.
+var selectJane = persons.Where(x => x.Id == 3).First();
+var selectRockSongs = songs.Where(x => x.Genre == Genre.Rock);
+Console.WriteLine("This songs rock:");
+selectJane.GetFavSongs();
+foreach (var rockSongs in selectRockSongs)
+{
+    selectJane.FavoriteSongs.Add(rockSongs);
+}
+selectJane.GetFavSongs();
+
+//Select the person Stefan and add all songs shorter than 3 min and of genre Hip-Hop.
+var selectStefan = persons.Where(x => x.FavoriteMusicType == Genre.Hip_Hop && x.FirstName == "Stefan").First();
+var selectSlessThan3 = songs.Where(x => x.Length < 3);
+selectStefan.GetFavSongs();
+foreach (var lessThan3 in selectSlessThan3)
+{
+    selectStefan.FavoriteSongs.Add(lessThan3);
+}
+selectStefan.GetFavSongs();
+
+//Select all persons from the persons array that have 4 or more songs.
+var moreThan4 = persons.Where(x => x.FavoriteSongs.Count >= 4);
+Console.WriteLine("These persons have 4 or more favorite songs:");
+Console.WriteLine("=============================================");
+foreach (var person in moreThan4)
+{
+    Console.WriteLine($"{person.FirstName} {person.LastName} has {person.FavoriteSongs.Count} number of favorite songs");
+}
+Console.WriteLine("=============================================");
+Console.WriteLine("You've reached the end of this console app!");

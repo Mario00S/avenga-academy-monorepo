@@ -29,16 +29,18 @@ namespace Class08.Homework.Models
             if (FavoriteSongs.Count > 0)
             {
 
-                Console.WriteLine($"The person {FirstName} {LastName} favorite songs are: ");
+                Console.WriteLine($"{FirstName} {LastName} favorite songs are: ");
+                Console.WriteLine("===============================================");
                 foreach (var song in FavoriteSongs)
                 {
-                    Console.WriteLine($"{song.Title}");
+                    Console.WriteLine($"- {song.Title}");
                 }
             }
             else
             {
-                Console.WriteLine($"The person {FirstName} {LastName} hates music");
+                Console.WriteLine($"{FirstName} {LastName} hates music");
             }
+            Console.WriteLine("===============================================");
         }
 
     }
