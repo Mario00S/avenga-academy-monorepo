@@ -14,6 +14,33 @@ namespace Class08.Homework.Models
         public List<Song> FavoriteSongs { get; set; }
 
 
+        public Person(int id, string fName, string lName, int age, Genre favoriteMusicType, List<Song> favoriteSongs)
+        {
+            Id = id;
+            FirstName = fName;
+            LastName = lName;
+            Age = age;
+            FavoriteMusicType = favoriteMusicType;
+            FavoriteSongs = favoriteSongs ?? new List<Song>(); 
+        }
+
+        public void GetFavSongs()
+        {
+            if (FavoriteSongs.Count > 0)
+            {
+
+                Console.WriteLine($"The person {FirstName} {LastName} favorite songs are: ");
+                foreach (var song in FavoriteSongs)
+                {
+                    Console.WriteLine($"{song.Title}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"The person {FirstName} {LastName} hates music");
+            }
+        }
+
     }
 }
 
@@ -26,3 +53,8 @@ namespace Class08.Homework.Models
 //Age
 //FavoriteMusicType (Genre enum)
 //FavoriteSongs(List of Songs)
+
+//Create a method called GetFavSongs() that:
+
+//Prints all titles of favorite songs
+//Or prints a message that the person hates music if the list is empty
