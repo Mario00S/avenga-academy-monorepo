@@ -7,6 +7,16 @@ public class Database
     public List<Librarian> Librarians { get; set; } = new List<Librarian>();
     public List<Member> Members { get; set; } = new List<Member>();
 
+    public string[] Books { get; set; } = 
+        {"The Hobbit",
+        "1984",
+        "Pride and Prejudice",
+        "The Great Gatsby",
+        "Moby Dick",
+        "Harry Potter",
+        "The Alchemist"
+    };
+
     public Database()
     {
         SeedData();
@@ -15,16 +25,7 @@ public class Database
 
     private void SeedData()
     {
-        string[] books =
-        {
-        "The Hobbit",
-        "1984",
-        "Pride and Prejudice",
-        "The Great Gatsby",
-        "Moby Dick",
-        "Harry Potter",
-        "The Alchemist"
-    };
+        var books = Books;
 
         Admins = new List<Admin>()
     {

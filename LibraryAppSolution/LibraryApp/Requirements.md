@@ -13,6 +13,6 @@ After logging in there should be different options for different roles:
 - Admins can add/remove Librarians, Members, and other Admins (can't remove itself)
 - Librarian can choose between seeing all members and all books
 - When choosing Members, all member names should appear
-- When choosing a name, it should print all the borrowed books and the remaining days for each book
+- When choosing a name, it should print all the borrowed books from the past and the currently boroowed book
 - When choosing Books, all book names appear with how many members have borrowed them next to it
 - Members are shown the names of the books they have borrowed and the remaining days for each one

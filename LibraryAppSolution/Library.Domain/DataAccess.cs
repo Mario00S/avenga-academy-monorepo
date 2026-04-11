@@ -20,7 +20,7 @@ public class DataAccess
         return adminFromDb;
     }
 
-    public Librarian? GetTrainer(string username, string password)
+    public Librarian? GetLibrarian(string username, string password)
     {
         Librarian? librarianFromDb = _db.Librarians
             .FirstOrDefault(x => x.Username == username && x.Password == password);
@@ -110,4 +110,14 @@ public class DataAccess
         }
     }
 
+
+    public List<Member> GetAllMembers()
+    {
+        return _db.Members;
+    }
+
+    public string[] GetAllBooks()
+    {
+        return _db.Books;
+    }
 }
