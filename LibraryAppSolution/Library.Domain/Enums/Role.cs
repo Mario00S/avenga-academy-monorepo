@@ -6,3 +6,4 @@ public enum Role
     Librarian,
     Member
 }
+
