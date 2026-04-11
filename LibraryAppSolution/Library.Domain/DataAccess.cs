@@ -110,6 +110,15 @@ public class DataAccess
         }
     }
 
+    public List<Admin> GetAllAdmins()
+    {
+        return _db.Admins;
+    }
+
+    public List<Librarian> GetAllLibrarians()
+    {
+        return _db.Librarians;
+    }
 
     public List<Member> GetAllMembers()
     {

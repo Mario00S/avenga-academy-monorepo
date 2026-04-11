@@ -14,11 +14,6 @@ public class MenuController
     private MemberService _memberService;
 
 
-    public MenuController()
-    {
-        
-    }
-
     public MenuController(
     Utils utils,
     AdminService adminService,
@@ -57,6 +52,9 @@ public class MenuController
                     while (!AdminUI(loggedAdmin)) ;
                     break;
                 case Role.Librarian:
+                    Librarian? loggedLibrarian = _librarianService.LibrarianLogin(username, password);
+                    WriteInColor($"Hello librarian: {loggedLibrarian.GetFullName()}", ConsoleColor.Green);
+                    while (!LibrarianUI(loggedLibrarian)) ;
                     break;
                 case Role.Member:
                     break;
@@ -70,9 +68,13 @@ public class MenuController
         }
 
 
+        WriteInColor("Do you want to exit? 1.Yes 2.No", ConsoleColor.DarkCyan);
+        int exitChoice = _utils.GetValidOption(new[] { 1, 2 });
 
-
-
+        if (exitChoice == 1)
+        {
+            return true;
+        }
         return false;
     }
 
@@ -119,8 +121,8 @@ public class MenuController
     {
         Console.Clear();
         WriteInColor($"Manage {role} menu.", ConsoleColor.DarkCyan);
-        WriteInColor("\nSelect Action: \n1. Add \n2. Remove \n3. Go back", ConsoleColor.Cyan);
-        int adminActionChoice = _utils.GetValidOption(new int[] { 1, 2, 3 });
+        WriteInColor("\nSelect Action: \n1. Add \n2. Remove \n3. View users \n4. Go back", ConsoleColor.Cyan);
+        int adminActionChoice = _utils.GetValidOption(new int[] { 1, 2, 3, 4 });
         switch (adminActionChoice)
         {
             case (int)AdminAction.CreateUser:
@@ -130,6 +132,9 @@ public class MenuController
                 DeleteUserMenu(role, loggedAdmin);
                 break;
             case 3:
+                ViewUsersMenu(role);
+                break;
+            case 4:
                 return false;
         }
         return true;
@@ -181,10 +186,122 @@ public class MenuController
         int userToDeleteChoice = _utils.GetValidOption(Enumerable.Range(1, users.Count).ToArray());
         string selectedUser = users[userToDeleteChoice - 1];
         _adminService.DeleteUser(selectedUser, role);
-        WriteInColor(@$"\nSuccessfully deleted {role}: ""{selectedUser}""", ConsoleColor.Green);
+        WriteInColor(@$"Successfully deleted {role}: ""{selectedUser}""", ConsoleColor.Green);
     }
 
 
+    public void ViewUsersMenu(Role role)
+    {
+        Console.Clear();
+        WriteInColor($"{role} list:\n", ConsoleColor.DarkCyan);
+
+        switch (role)
+        {
+            case Role.Admin:
+                var admins = _adminService.GetAllAdmins();
+                foreach (var admin in admins)
+                {
+                    Console.WriteLine(admin.GetFullName());
+                }
+                break;
+
+            case Role.Librarian:
+                var librarians = _adminService.GetAllLibrarians();
+                foreach (var librarian in librarians)
+                {
+                    Console.WriteLine(librarian.GetFullName());
+                }
+                break;
+
+            case Role.Member:
+                var members = _adminService.GetAllMembers();
+                foreach (var member in members)
+                {
+                    Console.WriteLine(member.GetFullName());
+                }
+                break;
+        }
+    }
+
+
+    public void LibrarianMainMenu()
+    {
+        Console.Clear();
+        WriteInColor("Welcome to the Librarian menu.", ConsoleColor.DarkCyan);
+        WriteInColor("\nSelect option: \n1. View Books \n2. View Members \n3. Logout", ConsoleColor.Cyan);
+    }
+
+
+    public bool LibrarianUI(Librarian loggedLibrarian)
+    {
+        try
+        {
+            LibrarianMainMenu();
+            int choice = _utils.GetValidOption(new[] { 1, 2, 3 });
+
+            switch (choice)
+            {
+                case 1:
+                    ViewBooksMenu();
+                    return false;
+
+                case 2:
+                    ViewMembersMenu();
+                    return false;
+
+                case 3:
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            WriteInColor(ex.Message, ConsoleColor.Red);
+        }
+
+        return false;
+    }
+
+
+    public void ViewBooksMenu()
+    {
+        //Console.Clear();
+        WriteInColor("Books list:\n", ConsoleColor.DarkCyan);
+
+        string[] books = _librarianService.GetAllBooks();
+
+        if (books.Length == 0)
+        {
+            WriteInColor("No books available at the moment.", ConsoleColor.DarkYellow);
+            return;
+        }
+
+        foreach (string book in books)
+        {
+            Console.WriteLine(book);
+        }
+        Pause();
+    }
+
+
+    public void ViewMembersMenu()
+    {
+        //Console.Clear();
+        WriteInColor("Members list:\n", ConsoleColor.DarkCyan);
+
+        var members = _librarianService.GetAllMembers();
+
+        foreach (var member in members)
+        {
+            Console.WriteLine(member.GetFullName());
+        }
+        Pause();
+    }
+
+    public void Pause()
+    {
+        WriteInColor("\nPress Enter to continue...", ConsoleColor.DarkCyan);
+        Console.ReadLine();
+    }
 
     public void WelcomeMenu()
     {

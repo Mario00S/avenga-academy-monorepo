@@ -49,4 +49,20 @@ public class AdminService
     {
         return _dataAccess.GetUsernames(role, loggedAdmin);
     }
+
+
+    public List<Admin> GetAllAdmins()
+    {
+        return _dataAccess.GetAllAdmins();
+    }
+
+    public List<Librarian> GetAllLibrarians()
+    {
+        return _dataAccess.GetAllLibrarians();
+    }
+
+    public List<Member> GetAllMembers()
+    {
+        return _dataAccess.GetAllMembers();
+    }
 }
