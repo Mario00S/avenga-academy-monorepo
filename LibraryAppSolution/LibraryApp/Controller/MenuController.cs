@@ -312,16 +312,6 @@ public class MenuController
         Console.ReadLine();
     }
 
-    //public void Pause()
-    //{
-    //    while (Console.KeyAvailable)
-    //    {
-    //        Console.ReadKey(true);
-    //    }
-
-    //    WriteInColor("\nPress any key to continue...", ConsoleColor.DarkCyan);
-    //    Console.ReadKey(true);
-    //}
 
     public void MemberMainMenu()
     {
