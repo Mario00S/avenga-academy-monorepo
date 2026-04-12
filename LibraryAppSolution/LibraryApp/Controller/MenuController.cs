@@ -49,14 +49,20 @@ public class MenuController
                 case Role.Admin:
                     Admin? loggedAdmin = _adminService.AdminLogin(username, password);
                     WriteInColor($"Hello admin {loggedAdmin.GetFullName()}", ConsoleColor.Green);
+                    Pause();
                     while (!AdminUI(loggedAdmin)) ;
                     break;
                 case Role.Librarian:
                     Librarian? loggedLibrarian = _librarianService.LibrarianLogin(username, password);
                     WriteInColor($"Hello librarian: {loggedLibrarian.GetFullName()}", ConsoleColor.Green);
+                    Pause();
                     while (!LibrarianUI(loggedLibrarian)) ;
                     break;
                 case Role.Member:
+                    Member? loggedMember = _memberService.MemberLogin(username, password);
+                    WriteInColor($"Hello member: {loggedMember.GetFullName()}", ConsoleColor.Green);
+                    Pause();
+                    while (!MemberUI(loggedMember)) ;
                     break;
                 default:
                     break;
@@ -221,6 +227,9 @@ public class MenuController
                 }
                 break;
         }
+
+        Console.WriteLine("\nPress any key to continue...");
+        //Console.ReadKey(true);
     }
 
 
@@ -302,6 +311,100 @@ public class MenuController
         WriteInColor("\nPress Enter to continue...", ConsoleColor.DarkCyan);
         Console.ReadLine();
     }
+
+    //public void Pause()
+    //{
+    //    while (Console.KeyAvailable)
+    //    {
+    //        Console.ReadKey(true);
+    //    }
+
+    //    WriteInColor("\nPress any key to continue...", ConsoleColor.DarkCyan);
+    //    Console.ReadKey(true);
+    //}
+
+    public void MemberMainMenu()
+    {
+        Console.Clear();
+        WriteInColor("Welcome to the Member menu.", ConsoleColor.DarkCyan);
+        WriteInColor("\nSelect option: \n1. View All books \n2. View current borrowed books \n3. View borrowing history \n4. Logout", ConsoleColor.Cyan);
+    }
+
+
+    public void ViewCurrentBorrowedBookMenu(Member loggedMember)
+    {
+        Console.Clear();
+        WriteInColor("Current borrowed book:\n", ConsoleColor.DarkCyan);
+
+        string currentBook = _memberService.CurrentBook(loggedMember);
+
+        if (string.IsNullOrWhiteSpace(currentBook))
+        {
+            WriteInColor("You currently do not have a borrowed book.", ConsoleColor.DarkYellow);
+            Pause();
+            return;
+        }
+
+        Console.WriteLine(currentBook);
+        Pause();
+    }
+
+    public void ViewBorrowingHistoryMenu(Member loggedMember)
+    {
+        Console.Clear();
+        WriteInColor("Borrowing history:\n", ConsoleColor.DarkCyan);
+
+        Dictionary<string, int> history = _memberService.HistoryOfBooks(loggedMember);
+
+        if (history.Count == 0)
+        {
+            WriteInColor("No borrowing history found.", ConsoleColor.DarkYellow);
+            Pause();
+            return;
+        }
+
+        foreach (var item in history)
+        {
+            Console.WriteLine($"{item.Key} - kept for {item.Value} days");
+        }
+
+        Pause();
+    }
+
+    public bool MemberUI(Member loggedMember)
+    {
+        try
+        {
+            MemberMainMenu();
+            int choice = _utils.GetValidOption(new[] { 1, 2, 3, 4 });
+
+            switch (choice)
+            {
+                case 1:
+                    ViewBooksMenu();
+                    return false;
+
+                case 2:
+                    ViewCurrentBorrowedBookMenu(loggedMember);
+                    return false;
+
+                case 3:
+                    ViewBorrowingHistoryMenu(loggedMember);
+                    return false;
+
+                case 4:
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            WriteInColor(ex.Message, ConsoleColor.Red);
+        }
+
+        return false;
+    }
+
+
 
     public void WelcomeMenu()
     {

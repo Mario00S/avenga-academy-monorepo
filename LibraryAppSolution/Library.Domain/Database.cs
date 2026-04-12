@@ -33,12 +33,14 @@ public class Database
         new Admin("John", "Johnson", "jjohnson123", "jjohnson123", 23),
         new Admin("David", "Brown", "dbrown123", "dbrown123", 32),
         new Admin("James", "Miller", "jmiller123", "jmiller123", 31),
+        new Admin("TestAcc", "Admin", "test123", "test123", 31),
     };
 
         Librarians = new List<Librarian>()
     {
         new Librarian("Emily", "Davis", "edavis123", "edavis123", 26),
         new Librarian("Sarah", "Wilson", "swilson123", "swilson123", 29),
+        new Librarian("Test", "AccLibrarian", "test123", "test123", 29),
     };
 
         Members = new List<Member>()
@@ -92,7 +94,14 @@ public class Database
                 { books[0], 6 },
                 { books[3], 10 },
             }
+        },
+
+        new Member("testAcc", "testAcc", "test123", "test123", 40)
+        {
+        CurrentlyBorrowedBook = string.Empty,
+        ReturnedBooksDaysKept = new Dictionary<string, int>()
         }
+
     };
     }
 
