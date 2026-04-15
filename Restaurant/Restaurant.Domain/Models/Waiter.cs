@@ -5,12 +5,14 @@ namespace Restaurant.Domain.Models;
 public class Waiter : User
 {
     public bool OnShift { get; set; }
+    public List<DayOfWeek> WorkingDays { get; set; }
 
     public Waiter(string firstName, string lastName, string username, string password)
-        :base(firstName, lastName, username, password)
+        : base(firstName, lastName, username, password)
     {
         Role = Role.Waiter;
         OnShift = false;
+        WorkingDays = new List<DayOfWeek>();
     }
 
     public Waiter(string username, string password)

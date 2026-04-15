@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Restaurant.App/Restaurant.App.csproj" />
   <Project Path="Restaurant.Domain/Restaurant.Domain.csproj" />
+  <Project Path="Restaurant.Service/Restaurant.Service.csproj" Id="264d14a9-a932-4e9d-b1cb-46c4f9b66791" />
 </Solution>

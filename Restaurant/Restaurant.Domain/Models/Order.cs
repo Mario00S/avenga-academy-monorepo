@@ -8,17 +8,18 @@ public class Order
         public Customer Customer { get; set; }
         public Waiter Waiter { get; set; }
         public List<MenuItem> Items { get; set; } = new();
-        public double TotalPrice { get; set; }
-        public OrderStatus Status { get; set; }
+    public double TotalPrice  => Items.Sum(x => x.Price);
+    public OrderStatus Status { get; set; }
 
 
-    public Order(int id, Customer customer, Waiter waiter, List<MenuItem> items, double totalPrice, OrderStatus status)
+    public Order(int id, Customer customer, Waiter waiter, List<MenuItem> items, OrderStatus status)
     {
         Id = id;
         Customer = customer;
         Waiter = waiter;
         Items = items;
-        TotalPrice = totalPrice;
+        //TotalPrice = totalPrice;
         Status = status;
     }
 }
+

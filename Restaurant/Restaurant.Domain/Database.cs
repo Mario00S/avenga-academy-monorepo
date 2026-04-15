@@ -5,11 +5,11 @@ namespace Restaurant.Domain;
 
 public class Database
 {
-        public List<Customer> Customers { get; set; } = new();
-        public List<Waiter> Waiters { get; set; } = new();
-        public List<MenuItem> MenuItems { get; set; } = new();
-        public List<Order> Orders { get; set; } = new();
-        public List<Admin> Admins { get; set; }
+    public List<Customer> Customers { get; set; } = new();
+    public List<Waiter> Waiters { get; set; } = new();
+    public List<MenuItem> MenuItems { get; set; } = new();
+    public List<Order> Orders { get; set; } = new();
+    public List<Admin> Admins { get; set; }
 
 
     public Database()
@@ -100,18 +100,18 @@ public class Database
 
         Orders = new List<Order>
     {
-        new Order(1, Customers[0], Waiters[0], new List<MenuItem> { MenuItems[0], MenuItems[4] }, MenuItems[0].Price + MenuItems[4].Price, OrderStatus.Active),
-        new Order(2, Customers[1], Waiters[1], new List<MenuItem> { MenuItems[1], MenuItems[5] }, MenuItems[1].Price + MenuItems[5].Price, OrderStatus.Completed),
-        new Order(3, Customers[2], Waiters[2], new List<MenuItem> { MenuItems[2], MenuItems[6] }, MenuItems[2].Price + MenuItems[6].Price, OrderStatus.Active),
-        new Order(4, Customers[3], Waiters[3], new List<MenuItem> { MenuItems[0], MenuItems[3], MenuItems[4] }, MenuItems[0].Price + MenuItems[3].Price + MenuItems[4].Price, OrderStatus.Completed),
-        new Order(5, Customers[4], Waiters[4], new List<MenuItem> { MenuItems[1], MenuItems[7] }, MenuItems[1].Price + MenuItems[7].Price, OrderStatus.Active),
-        new Order(6, Customers[5], Waiters[0], new List<MenuItem> { MenuItems[3], MenuItems[4], MenuItems[7] }, MenuItems[3].Price + MenuItems[4].Price + MenuItems[7].Price, OrderStatus.Completed),
-        new Order(7, Customers[6], Waiters[1], new List<MenuItem> { MenuItems[2], MenuItems[5] }, MenuItems[2].Price + MenuItems[5].Price, OrderStatus.Active),
-        new Order(8, Customers[7], Waiters[2], new List<MenuItem> { MenuItems[0], MenuItems[1], MenuItems[5] }, MenuItems[0].Price + MenuItems[1].Price + MenuItems[5].Price, OrderStatus.Completed),
-        new Order(9, Customers[8], Waiters[3], new List<MenuItem> { MenuItems[7], MenuItems[6] }, MenuItems[7].Price + MenuItems[6].Price, OrderStatus.Active),
-        new Order(10, Customers[9], Waiters[4], new List<MenuItem> { MenuItems[1], MenuItems[3], MenuItems[4] }, MenuItems[1].Price + MenuItems[3].Price + MenuItems[4].Price, OrderStatus.Completed),
-        new Order(11, Customers[0], Waiters[2], new List<MenuItem> { MenuItems[7], MenuItems[5] }, MenuItems[7].Price + MenuItems[5].Price, OrderStatus.Completed),
-        new Order(12, Customers[3], Waiters[0], new List<MenuItem> { MenuItems[2], MenuItems[4], MenuItems[7] }, MenuItems[2].Price + MenuItems[4].Price + MenuItems[7].Price, OrderStatus.Active)
+       new Order(1, Customers[0], Waiters[0], new List<MenuItem> { MenuItems[0], MenuItems[4] }, OrderStatus.Active),
+new Order(2, Customers[1], Waiters[1], new List<MenuItem> { MenuItems[1], MenuItems[5] }, OrderStatus.Completed),
+new Order(3, Customers[2], Waiters[2], new List<MenuItem> { MenuItems[2], MenuItems[6] }, OrderStatus.Active),
+new Order(4, Customers[3], Waiters[3], new List<MenuItem> { MenuItems[0], MenuItems[3], MenuItems[4] }, OrderStatus.Completed),
+new Order(5, Customers[4], Waiters[4], new List<MenuItem> { MenuItems[1], MenuItems[7] }, OrderStatus.Active),
+new Order(6, Customers[5], Waiters[0], new List<MenuItem> { MenuItems[3], MenuItems[4], MenuItems[7] }, OrderStatus.Completed),
+new Order(7, Customers[6], Waiters[1], new List<MenuItem> { MenuItems[2], MenuItems[5] }, OrderStatus.Active),
+new Order(8, Customers[7], Waiters[2], new List<MenuItem> { MenuItems[0], MenuItems[1], MenuItems[5] }, OrderStatus.Completed),
+new Order(9, Customers[8], Waiters[3], new List<MenuItem> { MenuItems[7], MenuItems[6] }, OrderStatus.Active),
+new Order(10, Customers[9], Waiters[4], new List<MenuItem> { MenuItems[1], MenuItems[3], MenuItems[4] }, OrderStatus.Completed),
+new Order(11, Customers[0], Waiters[2], new List<MenuItem> { MenuItems[7], MenuItems[5] }, OrderStatus.Completed),
+new Order(12, Customers[3], Waiters[0], new List<MenuItem> { MenuItems[2], MenuItems[4], MenuItems[7] }, OrderStatus.Active)
     };
     }
 
