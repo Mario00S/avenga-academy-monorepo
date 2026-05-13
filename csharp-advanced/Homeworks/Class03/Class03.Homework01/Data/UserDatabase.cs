@@ -25,7 +25,9 @@ public static class UserDatabase
         }
     }
 
-    public static User Search(string name)
+    //will return only one user
+
+    public static User Search(this string name)
     {
         foreach (User user in Users)
         {
@@ -37,7 +39,8 @@ public static class UserDatabase
         return null;
     }
 
-    public static User Search(int id)
+    //will return only one user
+    public static User Search(this int id)
     {
         foreach (User user in Users)
         {
@@ -47,5 +50,21 @@ public static class UserDatabase
             }
         }
         return null;
+    }
+
+    //using list if we want to return all mathcing for e.g. Users(not unique)
+    public static List<User> SearchByAge(int age)
+    {
+        List<User> matches = new List<User>();
+
+        foreach (User user in Users)
+        {
+            if (user.Age == age)
+            {
+                matches.Add(user);
+            }
+        }
+
+        return matches;
     }
 }
