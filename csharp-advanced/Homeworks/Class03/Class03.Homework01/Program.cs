@@ -2,7 +2,7 @@
 
 while (true)
 {
-    UserDatabase.ListUsers();
+    //UserDatabase.ListUsers();
 
     Console.WriteLine("\n1. Search by ID");
     Console.WriteLine("2. Search by Name");
@@ -92,8 +92,9 @@ while (true)
         case "0":
             return;
         default:
+            Console.WriteLine("Invalid menu option\nPlease enter 1,2,3 or 0");
             break;
     }
-    Console.WriteLine("\nPress any key...");
+    Console.WriteLine("\nPress any key to continue...");
     Console.ReadKey();
 }

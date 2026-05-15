@@ -35,6 +35,14 @@
 
 using Class03.Homework02.Models;
 
-///
+///declare and initialize variables
 Vehicle car = new Car();
+Vehicle boat = new Boat();
+Vehicle motorbike = new MotorBike();
+Vehicle plane = new Plane();
+
+//calling the displayInfo method
 car.DisplayInfo();
+boat.DisplayInfo();
+motorbike.DisplayInfo();
+plane.DisplayInfo();
