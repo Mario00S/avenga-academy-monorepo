@@ -21,23 +21,66 @@
 
 #endregion
 
+#region notes
+
+// List<T> is a concrete collection stored in memory.
+// Use it when you want list features like indexing, Add, Remove, or Count.
+
+// IEnumerable<T> is an interface for something you can iterate through.
+// Use it when you are chaining LINQ methods like Where, Select, or Distinct,
+// because those methods often return a sequence instead of a List<T>.
+
+// Use ToList() when you want to convert a sequence into a real List<T>.
+
+#endregion
+
 #region workspace
-//Filter all cars that have origin from Europe.
+//1.Filter all cars that have origin from Europe.
 List<Car> allCarsFromEurope = CarsData.Cars.Where(c => c.Origin == "Europe").ToList();
-Console.WriteLine("All the cars from europe are:");
+Console.WriteLine("1. All the cars from europe are:");
 int counter = 1;
 foreach (var car in allCarsFromEurope)
 {    
     Console.WriteLine($"{counter ++}: {car.Model}");
 }
 
-//Find all unique cylinder values for cars.
+//2.Find all unique cylinder values for cars.
 IEnumerable<int> distinctCylinder = CarsData.Cars.Select(c => c.Cylinders).Distinct();
-Console.WriteLine("unique cylinder values for cars");
+Console.WriteLine("2. unique cylinder values for cars");
 foreach (var cyilinder in distinctCylinder)
 {
-    Console.WriteLine(cyilinder);
+    Console.Write(cyilinder + ", ");
 }
 
+//3.Select all car names with their model names converted to uppercase.
+List<string> allCarsModelsUpperCase = CarsData.Cars.Select(c => c.Model.ToUpper()).ToList();
+Console.WriteLine("3.Select all car names with their model names converted to uppercase.");
+foreach (var car in allCarsModelsUpperCase)
+{
+    Console.WriteLine($"{counter++}: {car}");
+}
 
+//4.Check if there are any cars with horsepower greater than 300.
+Console.WriteLine("4.Check if there are any cars with horsepower greater than 300.");
+bool horsePowerGreaterThan300 = CarsData.Cars.Any(c => c.HorsePower > 300);
+Console.WriteLine($"Are there any cars with horsepower greater than 300Hp? {(horsePowerGreaterThan300 ? "Yes" : "No")}");
+
+//5.Find the car with the highest horsepower.
+Console.WriteLine("5.Find the car with the highest horsepower");
+Car highestHp = CarsData.Cars.OrderByDescending(c => c.HorsePower).First();
+Car highestHp2 = CarsData.Cars.MaxBy(c => c.HorsePower);
+Console.WriteLine($"The highest hp car is {highestHp.Model} - {highestHp.HorsePower}");
+Console.WriteLine($"The highest hp car is {highestHp2.Model} - {highestHp2.HorsePower}");
+
+//6. Filter all "Chevrolet" cars and order them by weight in descending order.
+Console.WriteLine("6. Filter all \"Chevrolet\" cars and order them by weight in descending order.");
+List<Car> allChevroletCars = CarsData.Cars
+    .Where(c => c.Model.Contains("Chevrolet"))
+    .OrderByDescending(c => c.Weight)
+    .ToList();
+
+foreach (var car in allChevroletCars)
+{
+    Console.WriteLine(car.Model + " " + car.Weight);
+}
 #endregion
