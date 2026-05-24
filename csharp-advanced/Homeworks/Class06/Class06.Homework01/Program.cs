@@ -1,4 +1,5 @@
 ﻿using Class06.Homework01;
+using Class06.Homework01.Helper;
 #region requirements
 //Practice LINQ Vol. 2 🏋️‍♂️
 //1. Filter all cars that have origin from Europe.
@@ -39,10 +40,13 @@
 List<Car> allCarsFromEurope = CarsData.Cars.Where(c => c.Origin == "Europe").ToList();
 Console.WriteLine("1. All the cars from europe are:");
 int counter = 1;
-foreach (var car in allCarsFromEurope)
-{    
-    Console.WriteLine($"{counter ++}: {car.Model}");
-}
+//foreach (var car in allCarsFromEurope)
+//{
+//    //Console.WriteLine($"{counter ++}: {car.Model}");
+//    CarPrinter.PrintCar(car);
+//}
+CarPrinter.PrintNumberedCars(allCarsFromEurope);
+Console.ReadLine();
 
 //2.Find all unique cylinder values for cars.
 IEnumerable<int> distinctCylinder = CarsData.Cars.Select(c => c.Cylinders).Distinct();
@@ -181,9 +185,11 @@ double lowestMpg = filteredCars.Min(c => c.MilesPerGalon);
 double highestMpg = filteredCars.Max(c => c.MilesPerGalon);
 double averageMpg = filteredCars.Average(c => c.MilesPerGalon);
 
-Console.WriteLine($"Min MPG: {lowestMpg}");
-Console.WriteLine($"Max MPG: {highestMpg}");
-Console.WriteLine($"Average MPG: {averageMpg}");
+//Console.WriteLine($"Min MPG: {lowestMpg}");
+//Console.WriteLine($"Max MPG: {highestMpg}");
+//Console.WriteLine($"Average MPG: {averageMpg}");
+
+CarPrinter.PrintMpgStats(lowestMpg, highestMpg, averageMpg);
 
 Console.ReadLine();
 
