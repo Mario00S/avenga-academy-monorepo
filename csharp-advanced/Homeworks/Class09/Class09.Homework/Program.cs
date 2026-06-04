@@ -30,10 +30,11 @@ string filesFolderPath = @"..\..\..\Files";
 string fileName = "names.txt";
 
 bool filesFolderExists = Directory.Exists(filesFolderPath);
-bool fileExists = File.Exists(fileName);
 
 //combine the folder and the file
 string combineFileToFolder = Path.Combine(filesFolderPath, fileName);
+bool fileExists = File.Exists(combineFileToFolder);
+
 
 Console.WriteLine("The folder 'Files' exists: {0}", filesFolderExists);
 
@@ -51,10 +52,25 @@ else
 //Create File
 if (!fileExists)
 {
-    File.Create(combineFileToFolder);
+    File.Create(combineFileToFolder).Close();
     ConsoleHelper.WriteInColor($"The file {fileName} has been successfully created", ConsoleColor.Green);
 }
 else
 {
     ConsoleHelper.WriteInColor("File already exists.", ConsoleColor.DarkYellow);
 }
+
+ConsoleHelper.WriteInColor("Trying to read names.txt when empty", ConsoleColor.DarkCyan);
+ConsoleHelper.ReadFromFile(combineFileToFolder);
+
+
+ConsoleHelper.WriteInColor("Trying to read names.txt after user inupt", ConsoleColor.DarkCyan);
+ConsoleHelper.UserInput(combineFileToFolder);
+ConsoleHelper.ReadFromFile(combineFileToFolder);
+Console.WriteLine("Press any key to trigger task 3");
+Console.ReadLine();
+
+
+ConsoleHelper.WriteInColor("Task 3, creating files for each different name letter", ConsoleColor.Blue);
+ConsoleHelper.CreateFilesByLetter(combineFileToFolder);
+Console.ReadLine();
