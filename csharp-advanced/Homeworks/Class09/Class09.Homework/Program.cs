@@ -74,3 +74,5 @@ Console.ReadLine();
 ConsoleHelper.WriteInColor("Task 3, creating files for each different name letter", ConsoleColor.Blue);
 ConsoleHelper.CreateFilesByLetter(combineFileToFolder);
 Console.ReadLine();
+//task 4 is executed w.o. issues multiple files with different names have been tested
+//Additional refactoring might be done
