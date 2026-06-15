@@ -1,5 +1,5 @@
 ﻿using Class06.Homework01;
-using Class06.Homework01.Helper;
+using Class06.Homework01.Helpers;
 #region requirements
 //Practice LINQ Vol. 2 🏋️‍♂️
 //1. Filter all cars that have origin from Europe.

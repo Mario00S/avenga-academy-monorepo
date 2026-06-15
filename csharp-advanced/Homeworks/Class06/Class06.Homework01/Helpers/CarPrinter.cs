@@ -1,4 +1,4 @@
-﻿namespace Class06.Homework01.Helper;
+﻿namespace Class06.Homework01.Helpers;
 
 public static class CarPrinter
 {
