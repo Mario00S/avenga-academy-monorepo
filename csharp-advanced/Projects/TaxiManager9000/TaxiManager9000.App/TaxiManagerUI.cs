@@ -132,6 +132,51 @@ namespace TaxiManager9000.App
                         break;
                     case MenuChoice.TaxiLicenseStatus:
                         ConsoleHelper.PrintInColor("===== Taxi License Status", ConsoleColor.Cyan);
+
+                        // Only managers can access this option
+                        if (_userService.CurrentUser.Role != Role.Manager)
+                        {
+                            ConsoleHelper.PrintError("Access denied! Only managers can view license status.");
+                            continue;
+                        }
+
+                        List<Driver> driversLiscenceStatus = _driverService.GetAll();
+                        if (driversLiscenceStatus.Count == 0)
+                        {
+                            ConsoleHelper.PrintError("No drivers found!");
+                            continue;
+                        }
+
+                        foreach (Driver driver in driversLiscenceStatus)
+                        {
+                            DateTime expiry = driver.LicenseExpieryDate;
+                            TimeSpan timeToExpiry = expiry - DateTime.Now;
+
+                            ConsoleColor consoleColor;
+                            string statusLabel;
+
+                            if (expiry < DateTime.Now)
+                            {
+                                consoleColor = ConsoleColor.Red;
+                                statusLabel = "Red"; // Expired
+                            }
+                            else if (timeToExpiry.TotalDays <= 90)
+                            {
+                                consoleColor = ConsoleColor.Yellow;
+                                statusLabel = "Yellow"; // 3 months to expiry
+                            }
+                            else
+                            {
+                                consoleColor = ConsoleColor.Green;
+                                statusLabel = "Green"; // Valid
+                            }
+
+                            ConsoleHelper.PrintInColor(
+                                $"Driver {driver.FirstName} {driver.LastName} with license {driver.License} expiring on {driver.LicenseExpieryDate.ToShortDateString()}",
+                                consoleColor
+                            );
+                            Console.ReadLine();
+                        }
                         break;
                     case MenuChoice.DriverManager:
                         ConsoleHelper.PrintInColor("===== Driver Manager", ConsoleColor.Blue);
@@ -197,8 +242,8 @@ namespace TaxiManager9000.App
             Driver driver4 = new Driver("Zakk", "Hook", Shift.Afternoon, car1, "LC20897583", new DateTime(2023, 9, 28));
             Driver driver5 = new Driver("Xavier", "Kelly", Shift.NoShift, null, "LC15636280", new DateTime(2024, 6, 1));
             Driver driver6 = new Driver("Joy", "Shelton", Shift.Evening, car2, "LC47845611", new DateTime(2023, 7, 3));
-            Driver driver7 = new Driver("Kristy", "Riddle", Shift.Morning, car3, "LC19006543", new DateTime(2024, 6, 12));
-            Driver driver8 = new Driver("Stuart", "Mayer", Shift.Evening, car3, "LC53187767", new DateTime(2023, 10, 10));
+            Driver driver7 = new Driver("Kristy", "Riddle", Shift.Morning, car3, "LC19006543", new DateTime(2026, 6, 12));
+            Driver driver8 = new Driver("Stuart", "Mayer", Shift.Evening, car3, "LC53187767", new DateTime(2028, 10, 10));
             List<Driver> seedDrivers = new List<Driver>() { driver1, driver2, driver3, driver4, driver5, driver6, driver7, driver8 };
             _driverService.Seed(seedDrivers);
             //needs to inherit from IServiceBase to get the Seed method
