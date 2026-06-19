@@ -133,13 +133,6 @@ namespace TaxiManager9000.App
                     case MenuChoice.TaxiLicenseStatus:
                         ConsoleHelper.PrintInColor("===== Taxi License Status", ConsoleColor.Cyan);
 
-                        // Only managers can access this option
-                        if (_userService.CurrentUser.Role != Role.Manager)
-                        {
-                            ConsoleHelper.PrintError("Access denied! Only managers can view license status.");
-                            continue;
-                        }
-
                         List<Driver> driversLiscenceStatus = _driverService.GetAll();
                         if (driversLiscenceStatus.Count == 0)
                         {
@@ -149,27 +142,7 @@ namespace TaxiManager9000.App
 
                         foreach (Driver driver in driversLiscenceStatus)
                         {
-                            DateTime expiry = driver.LicenseExpieryDate;
-                            TimeSpan timeToExpiry = expiry - DateTime.Now;
-
-                            ConsoleColor consoleColor;
-                            string statusLabel;
-
-                            if (expiry < DateTime.Now)
-                            {
-                                consoleColor = ConsoleColor.Red;
-                                statusLabel = "Red"; // Expired
-                            }
-                            else if (timeToExpiry.TotalDays <= 90)
-                            {
-                                consoleColor = ConsoleColor.Yellow;
-                                statusLabel = "Yellow"; // 3 months to expiry
-                            }
-                            else
-                            {
-                                consoleColor = ConsoleColor.Green;
-                                statusLabel = "Green"; // Valid
-                            }
+                            var (consoleColor, statusLabel) = LicenseStatusHelper.GetLicenseStatus(driver.LicenseExpieryDate);
 
                             ConsoleHelper.PrintInColor(
                                 $"Driver {driver.FirstName} {driver.LastName} with license {driver.License} expiring on {driver.LicenseExpieryDate.ToShortDateString()}",
@@ -180,6 +153,86 @@ namespace TaxiManager9000.App
                         break;
                     case MenuChoice.DriverManager:
                         ConsoleHelper.PrintInColor("===== Driver Manager", ConsoleColor.Blue);
+                        List<string> subMenu = new List<string>()
+                            {
+                                "Assign Unassigned Drivers",
+                                "Unassign Assigned Drivers",
+                                "Back to Main Menu"
+                            };
+
+                        int subChoice = _uiService.ChooseMenu(subMenu);
+
+                        switch (subChoice)
+                        {
+                            case 1:
+                                ConsoleHelper.PrintInColor("===== Assign Unassigned Drivers", ConsoleColor.Blue);
+                                // Step 1: Get all unassigned drivers
+                                List<Driver> unassignedDrivers = _driverService.GetUnassignedDrivers();
+                                if (unassignedDrivers.Count == 0)
+                                {
+                                    ConsoleHelper.PrintError("No unassigned drivers available!");
+                                    break;
+                                }
+
+                                // Step 2: Let manager pick a driver
+                                int driverChoice = _uiService.ChooseEntitiesMenu(unassignedDrivers);
+                                Driver chosenDriver = unassignedDrivers[driverChoice - 1];
+
+                                // Step 3: Pick a shift
+                                List<string> shifts = new List<string>() { "Morning", "Afternoon", "Evening" };
+                                int shiftChoice = _uiService.ChooseMenu(shifts);
+                                Shift chosenShift = (Shift)shiftChoice; // assuming enum values map correctly
+
+                                // Step 4: List available cars (valid license + no driver in chosen shift)
+                                List<Car> availableCars = _carService.GetAvailableCars(chosenShift);
+                                if (availableCars.Count == 0)
+                                {
+                                    ConsoleHelper.PrintError("No available cars for this shift!");
+                                    break;
+                                }
+
+                                int carChoice = _uiService.ChooseEntitiesMenu(availableCars);
+                                Car chosenCar = availableCars[carChoice - 1];
+
+                                // Step 5: Assign driver to car + shift
+                                _driverService.AssignDriver(chosenDriver, chosenCar, chosenShift);
+
+                                ConsoleHelper.PrintInColor(
+                                    $"Successfully assigned {chosenDriver.FirstName} {chosenDriver.LastName} " +
+                                    $"to {chosenCar.Model} in {chosenShift} shift!",
+                                    ConsoleColor.Green
+                                );
+                                break;
+                            case 2:
+                                ConsoleHelper.PrintInColor("===== Unassign Unassigned Drivers", ConsoleColor.Blue);
+                                // Step 1: Get all assigned drivers
+                                List<Driver> assignedDrivers = _driverService.GetAll()
+                                    .Where(d => d.Car != null && d.Shift != Shift.NoShift)
+                                    .ToList();
+
+                                if (assignedDrivers.Count == 0)
+                                {
+                                    ConsoleHelper.PrintError("No drivers are currently assigned!");
+                                    break;
+                                }
+
+                                // Step 2: Let manager pick a driver
+                                int driverChoiceCase2 = _uiService.ChooseEntitiesMenu(assignedDrivers);
+                                Driver chosenDriverCase2 = assignedDrivers[driverChoiceCase2 - 1];
+
+                                // Step 3: Unassign driver
+                                _driverService.UnassignDriver(chosenDriverCase2);
+
+                                ConsoleHelper.PrintInColor(
+                                    $"Successfully unassigned {chosenDriverCase2.FirstName} {chosenDriverCase2.LastName}.",
+                                    ConsoleColor.Green
+                                );
+                                break;
+                            case 3:
+                                ConsoleHelper.PrintInColor("===== Back to Main Menu", ConsoleColor.Blue);
+                                continue;
+                                //using continue to go back
+                        }
                         break;
                     case MenuChoice.ListAllCars:
                         ConsoleHelper.PrintInColor("===== List All Cars", ConsoleColor.Cyan);
@@ -223,8 +276,9 @@ namespace TaxiManager9000.App
         {
             User administrator = new User("bob123", "bob123", Role.Administrator);
             User manager = new User("JillWayne", "jillawesome1", Role.Manager);
+            User manager2 = new User("manager123", "manager123", Role.Manager);
             User maintenances = new User("GregGregsky", "supergreg1", Role.Maintenance);
-            List<User> seedUsers = new List<User>() { administrator, manager, maintenances };
+            List<User> seedUsers = new List<User>() { administrator, manager, manager2, maintenances };
             _userService.Seed(seedUsers);
 
             Car car1 = new Car("Auris (Toyota)", "AFW950", new DateTime(2023, 12, 1));
@@ -242,7 +296,7 @@ namespace TaxiManager9000.App
             Driver driver4 = new Driver("Zakk", "Hook", Shift.Afternoon, car1, "LC20897583", new DateTime(2023, 9, 28));
             Driver driver5 = new Driver("Xavier", "Kelly", Shift.NoShift, null, "LC15636280", new DateTime(2024, 6, 1));
             Driver driver6 = new Driver("Joy", "Shelton", Shift.Evening, car2, "LC47845611", new DateTime(2023, 7, 3));
-            Driver driver7 = new Driver("Kristy", "Riddle", Shift.Morning, car3, "LC19006543", new DateTime(2026, 6, 12));
+            Driver driver7 = new Driver("Kristy", "Riddle", Shift.Morning, car3, "LC19006543", new DateTime(2026, 8, 12));
             Driver driver8 = new Driver("Stuart", "Mayer", Shift.Evening, car3, "LC53187767", new DateTime(2028, 10, 10));
             List<Driver> seedDrivers = new List<Driver>() { driver1, driver2, driver3, driver4, driver5, driver6, driver7, driver8 };
             _driverService.Seed(seedDrivers);
