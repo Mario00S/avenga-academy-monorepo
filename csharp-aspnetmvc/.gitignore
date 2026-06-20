@@ -64,3 +64,6 @@ nunit-*.xml
 appsettings.Development.json
 appsettings.Local.json
 
+# Ignore vendor libraries restored by LibMan
+wwwroot/lib/
+
