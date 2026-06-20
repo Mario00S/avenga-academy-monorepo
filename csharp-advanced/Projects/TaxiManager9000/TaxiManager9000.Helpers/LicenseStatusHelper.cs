@@ -8,15 +8,15 @@ public static class LicenseStatusHelper
 
         if (expiryDate < DateTime.Now)
         {
-            return (ConsoleColor.Red, "Red"); // Expired
+            return (ConsoleColor.Red, "Expired"); // Expired
         }
-        else if (timeToExpiry.TotalDays <= 90)
+        else if (expiryDate <= DateTime.Now.AddMonths(3))
         {
-            return (ConsoleColor.Yellow, "Yellow"); // 3 months to expiry
+            return (ConsoleColor.Yellow, "3 months to expiry"); // 3 months to expiry
         }
         else
         {
-            return (ConsoleColor.Green, "Green"); // Valid
+            return (ConsoleColor.Green, "Valid"); // Valid
         }
     }
 }

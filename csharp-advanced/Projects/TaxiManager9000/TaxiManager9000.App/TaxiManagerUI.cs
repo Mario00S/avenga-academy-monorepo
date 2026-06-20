@@ -145,11 +145,11 @@ namespace TaxiManager9000.App
                             var (consoleColor, statusLabel) = LicenseStatusHelper.GetLicenseStatus(driver.LicenseExpieryDate);
 
                             ConsoleHelper.PrintInColor(
-                                $"Driver {driver.FirstName} {driver.LastName} with license {driver.License} expiring on {driver.LicenseExpieryDate.ToShortDateString()}",
+                                $"[{statusLabel}] Driver {driver.FirstName} {driver.LastName} with license {driver.License} expiring on {driver.LicenseExpieryDate.ToShortDateString()}",
                                 consoleColor
                             );
-                            Console.ReadLine();
                         }
+                        Console.ReadLine();
                         break;
                     case MenuChoice.DriverManager:
                         ConsoleHelper.PrintInColor("===== Driver Manager", ConsoleColor.Blue);
@@ -236,6 +236,43 @@ namespace TaxiManager9000.App
                         break;
                     case MenuChoice.ListAllCars:
                         ConsoleHelper.PrintInColor("===== List All Cars", ConsoleColor.Cyan);
+
+                        List<Car> cars = _carService.GetAll();
+                        if (cars.Count == 0)
+                        {
+                            ConsoleHelper.PrintError("No cars found");
+                            continue;
+                        }
+                        foreach (Car car in cars)
+                        {
+                            double percentage = _carService.GetShiftCoveragePercentage(car);
+
+                            ConsoleHelper.PrintInColor(
+                                $"{car.Id}) {car.Model} with License Plate {car.LicensePlate} and utilized {percentage:F0}%",
+                                ConsoleColor.Green
+                            );
+                        }
+                        Console.ReadLine();
+                        break;
+                    case MenuChoice.LicensePlateStatus:
+                        ConsoleHelper.PrintInColor("===== License Plate Status", ConsoleColor.Cyan);
+                        List<Car> carsStatus = _carService.GetAll();
+                        if (carsStatus.Count == 0)
+                        {
+                            ConsoleHelper.PrintError("No cars found!");
+                            continue;
+                        }
+
+                        foreach (Car car in carsStatus)
+                        {
+                            var (consoleColor, statusLabel) = LicenseStatusHelper.GetLicenseStatus(car.LicensePlateExpieryDate);
+
+                            ConsoleHelper.PrintInColor(
+                                $"[{statusLabel}] Car Id {car.Id} - Plate {car.LicensePlate} expiring on {car.LicensePlateExpieryDate.ToShortDateString()}",
+                                consoleColor
+                            );
+                        }
+                        Console.ReadLine();
                         break;
                     case MenuChoice.ChangePassword:
                         ConsoleHelper.PrintInColor("===== Change Password", ConsoleColor.Blue);
@@ -278,17 +315,20 @@ namespace TaxiManager9000.App
             User manager = new User("JillWayne", "jillawesome1", Role.Manager);
             User manager2 = new User("manager123", "manager123", Role.Manager);
             User maintenances = new User("GregGregsky", "supergreg1", Role.Maintenance);
-            List<User> seedUsers = new List<User>() { administrator, manager, manager2, maintenances };
+            User maintenances2 = new User("maint123", "maint123", Role.Maintenance);
+            List<User> seedUsers = new List<User>() { administrator, manager, manager2, maintenances, maintenances2 };
             _userService.Seed(seedUsers);
 
-            Car car1 = new Car("Auris (Toyota)", "AFW950", new DateTime(2023, 12, 1));
-            Car car2 = new Car("Auris (Toyota)", "CKE480", new DateTime(2021, 10, 15));
-            Car car3 = new Car("Transporter (Volkswagen)", "GZDR69", new DateTime(2024, 5, 30));
-            Car car4 = new Car("Mondeo (Ford)", "5RIP283", new DateTime(2022, 5, 13));
-            Car car5 = new Car("Premier (Peugeot)", "2AR9907", new DateTime(2022, 11, 9));
-            Car car6 = new Car("Vito (Mercedes)", "6RND294", new DateTime(2023, 3, 11));
+            Car car1 = new Car("Auris (Toyota)", "AFW950", new DateTime(2024, 3, 1));   // expired (Red)
+            Car car2 = new Car("Auris (Toyota)", "CKE480", new DateTime(2024, 4, 15));  // expired (Red)
+            Car car3 = new Car("Transporter (Volkswagen)", "GZDR69", DateTime.Now.AddMonths(2)); // expires in 2 months (Yellow)
+            Car car4 = new Car("Mondeo (Ford)", "5RIP283", DateTime.Now.AddMonths(3)); // expires in 3 months (Yellow)
+            Car car5 = new Car("Premier (Peugeot)", "2AR9907", new DateTime(2027, 5, 9)); // valid far future (Green)
+            Car car6 = new Car("Vito (Mercedes)", "6RND294", new DateTime(2027, 11, 11)); // valid far future (Green)
+
             List<Car> seedCars = new List<Car>() { car1, car2, car3, car4, car5, car6 };
             _carService.Seed(seedCars);
+
 
             Driver driver1 = new Driver("Romario", "Walsh", Shift.NoShift, null, "LC12456123", new DateTime(2023, 11, 5));
             Driver driver2 = new Driver("Kathleen", "Rankin", Shift.Morning, car1, "LC54435234", new DateTime(2022, 1, 12));
@@ -300,6 +340,15 @@ namespace TaxiManager9000.App
             Driver driver8 = new Driver("Stuart", "Mayer", Shift.Evening, car3, "LC53187767", new DateTime(2028, 10, 10));
             List<Driver> seedDrivers = new List<Driver>() { driver1, driver2, driver3, driver4, driver5, driver6, driver7, driver8 };
             _driverService.Seed(seedDrivers);
+
+
+            // Assign drivers to cars and shifts properly, needed for the All Cars menu for the percentage calculation
+            _driverService.AssignDriver(driver2, car1, Shift.Morning);
+            _driverService.AssignDriver(driver3, car1, Shift.Evening);
+            _driverService.AssignDriver(driver4, car1, Shift.Afternoon);
+            _driverService.AssignDriver(driver6, car2, Shift.Evening);
+            _driverService.AssignDriver(driver7, car3, Shift.Morning);
+            _driverService.AssignDriver(driver8, car3, Shift.Evening);
             //needs to inherit from IServiceBase to get the Seed method
         }
     }

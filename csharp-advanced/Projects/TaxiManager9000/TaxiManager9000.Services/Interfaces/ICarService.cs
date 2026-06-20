@@ -6,6 +6,7 @@ namespace TaxiManager9000.Services.Interfaces
     public interface ICarService : IServiceBase<Car>
     {
         List<Car> GetAvailableCars(Shift shift);
+        public double GetShiftCoveragePercentage(Car car);
 
     }
 }
