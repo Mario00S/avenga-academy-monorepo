@@ -23,8 +23,7 @@
                     <td>@category.Description</td>
                     <td><a class="btn btn-link" asp-controller="Categories" asp-action="Edit" asp-route-id="@category.CategoryId">Edit</a></td>
                 </tr>
-            }
-
+            }           
             @* Tag Helpers are one of the most powerful features in ASP.NET Core Razor views because they let you write HTML that is automatically enriched with server-side logic. Instead of hardcoding URLs or form actions, you use attributes like asp-controller, asp-action, or asp-for, and the Razor engine translates them into proper HTML based on your routing and model.
 
             Key ideas about Tag Helpers
@@ -53,4 +52,7 @@
             Example *@
             </tbody>
         </table>
+    <div class="mt-3">
+        <a class="btn btn-primary" asp-controller="Categories" asp-action="Add">Add Category</a>
+    </div>
     }
