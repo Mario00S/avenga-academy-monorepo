@@ -5,7 +5,9 @@
     <h3>Add New Category</h3>
 }
 
-<form method="post" asp-controller="Categories" asp-action="Add">
+<partial name="_Category" model="@Model"/>
+
+@*  <form method="post" asp-controller="Categories" asp-action="Add">
     <div class="text-danger" asp-validation-summary="All"></div>
 
     <div class="row mb-3">
@@ -31,7 +33,7 @@
 
     <div class="row mb-3">
         <div class="col-2">
-            <input type="submit" class="btn btn-success" value="Save" />
+            <input type="submit" class="btn btn-primary" value="Add" />
         </div>
     </div>
-</form>
+</form>  *@

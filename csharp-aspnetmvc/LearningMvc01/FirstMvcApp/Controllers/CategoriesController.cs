@@ -25,6 +25,7 @@ namespace FirstMvcApp.Controllers
 
         public IActionResult Edit(int? id)
         {
+            ViewBag.Action = "edit";
             //var category = new Category { CategoryId = id.HasValue?id.Value:0 };
             var category = CategoriesRepository.GetCategoryById(id.HasValue ? id.Value : 0);
             return View(category);
@@ -46,6 +47,8 @@ namespace FirstMvcApp.Controllers
 
         public IActionResult Add()
         {
+            ViewBag.Action = "Add";
+
             return View();
         }
 
@@ -58,6 +61,12 @@ namespace FirstMvcApp.Controllers
                 return RedirectToAction("Index");
             }
             return View(category);
+        }
+
+        public IActionResult Delete(int categoryId)
+        {
+            CategoriesRepository.DeleteCategory(categoryId);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

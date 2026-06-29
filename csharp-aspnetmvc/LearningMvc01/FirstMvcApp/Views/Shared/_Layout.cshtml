@@ -34,6 +34,7 @@
         >
         @RenderBody()
     </div>
+    @await RenderSectionAsync("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
 </body>
 </html>
