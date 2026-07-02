@@ -10,10 +10,18 @@
             new Product { ProductId = 4, CategoryId = 2, Name = "White Bread", Quantity = 300, Price = 1.50 }
         };
 
+        //old implementation that caused a bug, needed to add a check in a scenario if there are no products, for e.g. if i delete all the in memory ones and add a new product after that
+        //public static void AddProduct(Product product)
+        //{
+        //    var maxId = _products.Max(x => x.ProductId);
+        //    product.ProductId = maxId + 1;
+        //    _products.Add(product);
+        //}
+
         public static void AddProduct(Product product)
         {
-            var maxId = _products.Max(x => x.ProductId);
-            product.ProductId = maxId + 1;
+            int newId = _products.Any() ? _products.Max(x => x.ProductId) + 1 : 1;
+            product.ProductId = newId;
             _products.Add(product);
         }
 

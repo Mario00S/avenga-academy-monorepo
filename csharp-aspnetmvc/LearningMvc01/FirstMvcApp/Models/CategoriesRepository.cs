@@ -9,10 +9,11 @@ public static class CategoriesRepository
             new Category { CategoryId = 3, Name = "Meat", Description = "Meat" }
         };
 
+    //old implementation that caused a bug, needed to add a check in a scenario if there are no categories, for e.g. if i delete all the in memory ones and add a new category after that
     public static void AddCategory(Category category)
     {
-        var maxId = _categories.Max(x => x.CategoryId);
-        category.CategoryId = maxId + 1;
+        int newId = _categories.Any() ? _categories.Max(x => x.CategoryId) + 1 : 1;
+        category.CategoryId = newId;
         _categories.Add(category);
     }
 

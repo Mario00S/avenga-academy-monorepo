@@ -22,6 +22,7 @@
     </dl>
 </div>
 
+@*when using tag helpers the anti forgery tokken is automatically added to be investigated*@
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="ProductId" />
     <button type="submit" class="btn btn-danger">Delete</button>
