@@ -65,5 +65,12 @@ namespace FirstMvcApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult ProductsByCategoryPartial(int categoryId)
+        {
+            var products = ProductsRepository.GetProductsByCategoryId(categoryId);
+
+            return PartialView("_Products", products);
+        }
+
     }
 }
