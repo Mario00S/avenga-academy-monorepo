@@ -3,19 +3,24 @@
 public class Filters
 {
     public Filters(string filterstring) {
-        Filterstring = filterstring ?? "all-all-all";
-        string[] filters = Filterstring.Split('-');
+        FilterString = filterstring ?? "all-all-all";
+        string[] filters = FilterString.Split('-');
         CategoryId = filters[0];
         Due = filters[1];
         StatusId = filters[2];
     }
 
-    public string Filterstring { get; set; }
+    public string FilterString { get; set; }
     public string CategoryId { get; set; }
     public string Due { get; set; }
     public string StatusId { get; set; }
     public bool HasCategory => CategoryId.ToLower() != "all";
+    //public bool HasCategory - if not ussing arrow expression
+    //{
+    //    get { return CategoryId.ToLower() != "all"; }
+    //}
     public bool HasDue => Due.ToLower() != "all";
+    public bool HasStatus => StatusId.ToLower() != "all";
     public static Dictionary<string, string> DueFilterValues =>
         new Dictionary<string, string> {
         {"future", "Future"},

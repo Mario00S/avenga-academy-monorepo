@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
-
+//Renamed the model due to conflicts with the namespace
 namespace ToDo.App.Models
 {
-    public class ToDo
+    public class ToDoModel
     {
         public int Id { get; set; }
         [Required(ErrorMessage ="Please enter a description.")]
