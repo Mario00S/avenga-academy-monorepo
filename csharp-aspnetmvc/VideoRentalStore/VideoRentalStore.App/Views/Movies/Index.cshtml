@@ -1,0 +1,36 @@
+﻿
+@model IEnumerable<Movie>
+
+<h2>Available Movies</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Available</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.Genre</td>
+                <td>@(movie.IsAvailable ? "Yes" : "No")</td>
+                <td>
+                    @if (movie.IsAvailable)
+                    {
+                        <!-- Link to GET Rent action -->
+                        <a asp-action="Rent" asp-route-id="@movie.Id" class="btn btn-primary">Rent</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not Available</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

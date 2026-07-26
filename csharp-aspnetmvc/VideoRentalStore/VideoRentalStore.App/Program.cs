@@ -1,7 +1,16 @@
+using VideoRentalStore.DataAccess.Interfaces;
+using VideoRentalStore.DataAccess.Repository;
+using VideoRentalStore.Services.Implementations;
+using VideoRentalStore.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Dependency Injection - trying with add signleton because of inMemory Db
+builder.Services.AddSingleton<IMovieRepository, InMemoryMovieRepository>();
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 var app = builder.Build();
 

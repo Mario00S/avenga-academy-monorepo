@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VideoRentalStore.DataAccess\VideoRentalStore.DataAccess.csproj" />
+    <ProjectReference Include="..\VideoRentalStore.Services\VideoRentalStore.Services.csproj" />
+  </ItemGroup>
+
 </Project>
