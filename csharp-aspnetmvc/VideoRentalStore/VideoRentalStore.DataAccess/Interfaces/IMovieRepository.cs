@@ -2,12 +2,8 @@
 
 namespace VideoRentalStore.DataAccess.Interfaces
 {
-    public interface IMovieRepository
+    public interface IMovieRepository : IRepository<Movie>
     {
-        IEnumerable<Movie> GetAll();
-        Movie GetById(int id);
-        void Add(Movie movie);
-        void Remove(int id);
-        void Update(Movie movie);
+        IEnumerable<Movie> GetAvailableMovies();
     }
 }

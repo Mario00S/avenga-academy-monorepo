@@ -1,36 +1,38 @@
-﻿
-@model IEnumerable<Movie>
+﻿@model IEnumerable<Movie>
 
 <h2>Available Movies</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Available</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var movie in Model)
-        {
-            <tr>
-                <td>@movie.Title</td>
-                <td>@movie.Genre</td>
-                <td>@(movie.IsAvailable ? "Yes" : "No")</td>
-                <td>
-                    @if (movie.IsAvailable)
+<div class="row">
+    @foreach (var movie in Model)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <!-- Placeholder image for now -->
+                <img src="~/images/placeholder.jpg" class="card-img-top" alt="Movie poster placeholder">
+
+                <div class="card-body">
+                    <h5 class="card-title">@movie.Title</h5>
+                    <p class="card-text"><strong>Genre:</strong> @movie.Genre</p>
+                    <p class="card-text"><strong>Available:</strong> @(movie.IsAvailable ? "Yes" : "No")</p>
+                </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id" class="btn btn-info">Details</a>
+
+                    @if (Context.Request.Cookies["UserId"] != null && movie.IsAvailable)
                     {
-                        <!-- Link to GET Rent action -->
-                        <a asp-action="Rent" asp-route-id="@movie.Id" class="btn btn-primary">Rent</a>
+                        <a asp-controller="Movies" asp-action="Rent" asp-route-id="@movie.Id" class="btn btn-success">Rent</a>
+                    }
+                    else if (!movie.IsAvailable)
+                    {
+                        <span class="text-danger">Not available</span>
                     }
                     else
                     {
-                        <span class="text-muted">Not Available</span>
+                        <a asp-controller="User" asp-action="Login" class="btn btn-primary">Login to Rent</a>
                     }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -12,10 +12,18 @@
 
 @if (Model.IsAvailable)
 {
-    <form asp-action="RentConfirmed" method="post">
-        <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit">Confirm Rent</button>
+    if (Context.Request.Cookies["UserId"] != null){
+    <form asp-controller="Movies" asp-action="RentConfirmed" asp-route-id="@Model.Id" method="post">
+        <button type="submit" class="btn btn-success">Confirm Rent</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
+    }
+    else
+    {
+        <p class="text-danger">You must be logged in to rent this movie.</p>
+        <a asp-controller="User" asp-action="Login" class="btn btn-primary">Go to Login</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    }
 }
 else
 {

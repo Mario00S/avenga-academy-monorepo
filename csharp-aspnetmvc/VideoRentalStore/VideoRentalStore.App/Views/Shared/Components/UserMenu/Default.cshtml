@@ -1,0 +1,20 @@
+﻿@model VideoRentalStore.Models.ViewModels.UserMenuViewModel
+
+@if (!string.IsNullOrEmpty(Model.FullName))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle"></i> @Model.FullName
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">Profile</a></li>
+            <li><a class="dropdown-item" asp-controller="User" asp-action="Logout">Logout</a></li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="User" asp-action="Login">Login</a>
+    </li>
+}

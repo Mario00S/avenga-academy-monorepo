@@ -8,7 +8,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VideoRentalStore.DataAccess\VideoRentalStore.DataAccess.csproj" />
+    <ProjectReference Include="..\VideoRentalStore.Models\VideoRentalStore.Models.csproj" />
     <ProjectReference Include="..\VideoRentalStore.Services\VideoRentalStore.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

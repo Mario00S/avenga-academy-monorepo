@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VideoRentalStore.Domain.Entities;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.App.Controllers
@@ -29,11 +30,29 @@ namespace VideoRentalStore.App.Controllers
         }
 
         //both methods take the same parameter that's why i cannot use the same name // compared to ToDoApp example Create method
-        [HttpPost("rent")]
+        [HttpPost("rent/{id}")]
         public IActionResult RentConfirmed(int id)
         {
-            _service.RentMovie(id, userId: 1);
+            //might change this, in the moment is a restriction for someone to acces without authorization by targeting the url /rent/5
+            var userId = Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Error"] = "You must be logged in to rent movies.";
+                return RedirectToAction("Index");
+            }
+            _service.RentMovie(id, int.Parse(userId));
             return RedirectToAction("Index");
+        }
+
+        [HttpGet("details/{id}")]
+        public IActionResult Details(int id)
+        {
+            var movie = _service.GetMovieById(id);
+            if (movie is null)
+            {
+                return NotFound();
+            }
+            return View(movie);
         }
     }
 }

@@ -24,8 +24,12 @@ public class MovieService : IMovieService
         return _repository.GetById(id);
     }
 
-    public void RentMovie(int movieId, int userId)
+    public void RentMovie(int movieId, int? userId)
     {
+        if (userId == null)
+        {
+            throw new UnauthorizedAccessException("User must be logged in to remnt movies");
+        }
         var movie = _repository.GetById(movieId);
         if (movie == null || !movie.IsAvailable)
             throw new InvalidOperationException("Movie not available");
