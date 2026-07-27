@@ -38,5 +38,16 @@ public class MovieService : IMovieService
         movie.IsAvailable = false;
         _repository.Update(movie);
     }
+    public IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize)
+    {
+        return _repository.GetAvailableMovies()
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+    }
+
+    public IEnumerable<Movie> GetAllMovies()
+    {
+        return _repository.GetAll();
+    }
 }
 

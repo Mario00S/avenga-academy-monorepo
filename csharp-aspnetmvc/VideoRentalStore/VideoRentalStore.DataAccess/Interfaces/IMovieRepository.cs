@@ -5,5 +5,6 @@ namespace VideoRentalStore.DataAccess.Interfaces
     public interface IMovieRepository : IRepository<Movie>
     {
         IEnumerable<Movie> GetAvailableMovies();
+        IEnumerable<Movie> GetPagedMovies(int pageNumber, int pageSize);
     }
 }

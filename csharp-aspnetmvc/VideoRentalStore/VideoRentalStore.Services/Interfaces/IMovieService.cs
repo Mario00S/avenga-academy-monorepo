@@ -4,9 +4,11 @@ namespace VideoRentalStore.Services.Interfaces;
 
 public interface IMovieService
 {
+    IEnumerable<Movie> GetAllMovies();
     IEnumerable<Movie> GetAvailableMovies();
     Movie GetMovieById(int id);
     void RentMovie(int movieId, int? userId);
     //user can be nullable doing this due to error in the service
+    IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize);
 }
 

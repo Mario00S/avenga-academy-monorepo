@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VideoRentalStore.Mapper;
+using VideoRentalStore.Services.Implementations;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.App.Controllers
@@ -7,10 +9,14 @@ namespace VideoRentalStore.App.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IRentalService _rentalService;
+        private readonly IMovieService _movieService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IRentalService rentalService, IMovieService movieService)
         {
             _userService = userService;
+            _rentalService = rentalService;
+            _movieService = movieService;
         }
 
         // GET: /User/Login
@@ -58,9 +64,18 @@ namespace VideoRentalStore.App.Controllers
                 return RedirectToAction("Login");
             }
 
-            ViewData["UserName"] = user.FullName;
-            return View(user);
+            // Fetch rentals for this user
+            var rentals = _rentalService.GetRentalsByUserId(userId);
+
+            // Fetch all movies (or just those needed)
+            var movies = _movieService.GetAllMovies();
+
+            // Map into UserProfileViewModel with rented movies
+            var vm = UserMapper.MapUserToProfile(user, rentals, movies);
+
+            return View(vm); // pass the ViewModel instead of the domain User
         }
+
 
         // GET: /User/Logout
         [HttpGet("logout")]
