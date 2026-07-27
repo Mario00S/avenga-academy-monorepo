@@ -10,4 +10,8 @@
     <Folder Include="Dtos\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VideoRentalStore.Domain\VideoRentalStore.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

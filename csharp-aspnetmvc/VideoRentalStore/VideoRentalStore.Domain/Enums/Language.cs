@@ -11,6 +11,8 @@ namespace VideoRentalStore.Domain.Enums
         Spanish = 2,
         French = 3,
         German = 4,
-        Italian = 5
+        Italian = 5,
+        Japanese = 6,
+        Korean = 7
     }
 }

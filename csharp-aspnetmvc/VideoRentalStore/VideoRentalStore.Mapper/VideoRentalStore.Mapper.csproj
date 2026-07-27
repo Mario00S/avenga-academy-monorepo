@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VideoRentalStore.Domain\VideoRentalStore.Domain.csproj" />
+    <ProjectReference Include="..\VideoRentalStore.Models\VideoRentalStore.Models.csproj" />
+  </ItemGroup>
+
 </Project>

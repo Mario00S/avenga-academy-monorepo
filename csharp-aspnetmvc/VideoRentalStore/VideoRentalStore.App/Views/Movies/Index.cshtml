@@ -7,7 +7,6 @@
     {
         <div class="col-md-3 mb-4">
             <div class="card h-100 shadow-sm">
-                <!-- Placeholder image for now -->
                 <img src="~/images/placeholder.jpg" class="card-img-top" alt="Movie poster placeholder">
 
                 <div class="card-body">
@@ -36,3 +35,29 @@
         </div>
     }
 </div>
+
+<!-- Numbered pagination bar -->
+<nav aria-label="Movie pagination">
+    <ul class="pagination justify-content-center">
+        @if (ViewBag.Page > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+
+        @if (ViewBag.Page < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)">Next</a>
+            </li>
+        }
+    </ul>
+</nav>

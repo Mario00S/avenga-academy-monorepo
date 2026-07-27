@@ -11,8 +11,10 @@ builder.Services.AddControllersWithViews();
 //Dependency Injection - trying with add signleton because of inMemory Db
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 builder.Services.AddSingleton<IMovieRepository, InMemoryMovieRepository>();
+builder.Services.AddSingleton<IRentalRepository, InMemoryRentalRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRentalService, RentalService>();
 
 var app = builder.Build();
 

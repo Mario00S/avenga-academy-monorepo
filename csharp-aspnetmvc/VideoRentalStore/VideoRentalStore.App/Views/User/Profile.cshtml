@@ -1,0 +1,44 @@
+﻿@model VideoRentalStore.Models.ViewModels.UserProfileViewModel
+
+<h2>User Profile</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">@Model.FullName</h5>
+        <p><strong>Age:</strong> @Model.Age</p>
+        <p><strong>Card Number:</strong> @Model.CardNumber</p>
+        <p><strong>Subscription:</strong> @Model.SubscriptionType</p>
+        <p><strong>Created On:</strong> @Model.CreatedOn.ToShortDateString()</p>
+        <p><strong>Expired:</strong> @(Model.IsSubscriptionExpired ? "Yes" : "No")</p>
+    </div>
+</div>
+
+<h3>Rented Movies</h3>
+@if (Model.RentedMovies != null && Model.RentedMovies.Any())
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Rented On</th>
+                <th>Returned On</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rental in Model.RentedMovies)
+            {
+                <tr>
+                    <td>@rental.Title</td>
+                    <td>@rental.Genre</td>
+                    <td>@rental.RentedOn.ToShortDateString()</td>
+                    <td>@(rental.ReturnedOn.HasValue ? rental.ReturnedOn.Value.ToShortDateString() : "Not returned")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No movies rented yet.</p>
+}
