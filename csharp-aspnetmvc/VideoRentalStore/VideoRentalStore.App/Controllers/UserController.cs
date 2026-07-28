@@ -76,6 +76,36 @@ namespace VideoRentalStore.App.Controllers
             return View(vm); // pass the ViewModel instead of the domain User
         }
 
+        [HttpPost("return")]
+        public IActionResult Return(int rentalId)
+        {
+            var userIdCookie = Request.Cookies["UserId"];
+            if (string.IsNullOrEmpty(userIdCookie))
+            {
+                return RedirectToAction("Login");
+            }
+
+            int userId = int.Parse(userIdCookie);
+
+            var rental = _rentalService.GetById(rentalId);
+            if (rental == null || rental.UserId != userId)
+            {
+                TempData["Error"] = "Invalid rental or unauthorized action.";
+                return RedirectToAction("Profile");
+            }
+
+            // Mark rental as returned
+            _rentalService.ReturnMovie(rentalId);
+
+            // Mark movie as available again
+            _movieService.MarkAvailable(rental.MovieId);
+
+            TempData["Success"] = "Movie returned successfully.";
+            return RedirectToAction("Profile");
+        }
+
+
+
 
         // GET: /User/Logout
         [HttpGet("logout")]

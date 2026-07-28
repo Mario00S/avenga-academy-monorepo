@@ -23,6 +23,7 @@
                 <th>Genre</th>
                 <th>Rented On</th>
                 <th>Returned On</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -32,11 +33,29 @@
                     <td>@rental.Title</td>
                     <td>@rental.Genre</td>
                     <td>@rental.RentedOn.ToShortDateString()</td>
-                    <td>@(rental.ReturnedOn.HasValue ? rental.ReturnedOn.Value.ToShortDateString() : "Not returned")</td>
+                    <td>
+                        @(rental.ReturnedOn.HasValue
+                               ? rental.ReturnedOn.Value.ToShortDateString()
+                               : "Not returned")
+                    </td>
+                    <td>
+                        @if (!rental.ReturnedOn.HasValue)
+                        {
+                            <form asp-controller="User" asp-action="Return" method="post">
+                                <input type="hidden" name="rentalId" value="@rental.RentalId" />
+                                <button type="submit" class="btn btn-warning btn-sm">Return</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-success">Returned</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
 }
 else
 {

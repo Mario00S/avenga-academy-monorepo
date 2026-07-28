@@ -31,11 +31,15 @@ public class MovieService : IMovieService
             throw new UnauthorizedAccessException("User must be logged in to remnt movies");
         }
         var movie = _repository.GetById(movieId);
-        if (movie == null || !movie.IsAvailable)
+        if (movie == null || movie.Quantity <= 0) 
+        { 
             throw new InvalidOperationException("Movie not available");
-
-        // Business rule: once rented, mark as unavailable
-        movie.IsAvailable = false;
+        }
+        movie.Quantity--;
+        if (movie.Quantity == 0)
+        {
+            movie.IsAvailable = false;
+        }
         _repository.Update(movie);
     }
     public IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize)
@@ -49,5 +53,25 @@ public class MovieService : IMovieService
     {
         return _repository.GetAll();
     }
+
+    public void MarkAvailable(int movieId)
+    {
+        var movie = _repository.GetById(movieId);
+        if (movie == null)
+        {
+            throw new InvalidOperationException("Movie not found");
+        }
+
+        movie.Quantity++;
+
+        if (movie.Quantity > 0)
+        {
+        movie.IsAvailable = true;
+
+        }
+
+        _repository.Update(movie);
+    }
+
 }
 

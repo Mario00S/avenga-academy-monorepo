@@ -15,7 +15,8 @@ public static class UserMapper
                 Title = movie?.Title ?? "Unknown",
                 Genre = movie?.Genre.ToString() ?? "Unknown",
                 RentedOn = r.RentedOn,
-                ReturnedOn = r.ReturnedOn
+                ReturnedOn = r.ReturnedOn,
+                RentalId = r.Id
             };
         }).ToList();
 

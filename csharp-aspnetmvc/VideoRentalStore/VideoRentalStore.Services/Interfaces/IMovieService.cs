@@ -10,5 +10,6 @@ public interface IMovieService
     void RentMovie(int movieId, int? userId);
     //user can be nullable doing this due to error in the service
     IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize);
+    void MarkAvailable(int movieId);
 }
 
