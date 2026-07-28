@@ -50,10 +50,21 @@ namespace VideoRentalStore.App.Controllers
             int userId = int.Parse(userIdCookie);
 
             //add movie - rent movie
-            _rentalService.RentMovie(userId, id);
-
+            //_rentalService.RentMovie(userId, id);
             //mark as unavailable
-            _rentalService.RentMovie(id, userId);
+            //_rentalService.RentMovie(id, userId);
+
+            try
+            {
+                _rentalService.RentMovie(userId, id);
+                TempData["Sucess"] = "Movie rented successfully";
+            }
+            catch (InvalidOperationException ex)
+            {
+
+                TempData["Error"] = ex.Message;
+            }
+
             return RedirectToAction("Index");
         }
 
