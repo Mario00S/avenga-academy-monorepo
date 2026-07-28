@@ -8,6 +8,12 @@ namespace VideoRentalStore.App.Controllers
     {
         public IActionResult Index()
         {
+            if (Request.Cookies["UserId"] != null)
+            {
+                // Redirect logged-in users to Movies
+                return RedirectToAction("Index", "Movies");
+            }
+
             return View();
         }
 
