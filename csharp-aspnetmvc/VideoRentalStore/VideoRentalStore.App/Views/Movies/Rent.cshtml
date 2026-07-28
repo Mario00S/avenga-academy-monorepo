@@ -10,13 +10,19 @@
     </div>
 </div>
 
-@if (Model.IsAvailable)
+@if (ViewBag.AlreadyRented == true)
 {
-    if (Context.Request.Cookies["UserId"] != null){
-    <form asp-controller="Movies" asp-action="RentConfirmed" asp-route-id="@Model.Id" method="post">
-        <button type="submit" class="btn btn-success">Confirm Rent</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </form>
+    <p class="text-danger">You have already rented this movie and must return it before renting again.</p>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}
+else if (Model.IsAvailable)
+{
+    if (Context.Request.Cookies["UserId"] != null)
+    {
+        <form asp-controller="Movies" asp-action="RentConfirmed" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-success">Confirm Rent</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
     }
     else
     {
@@ -30,3 +36,4 @@ else
     <p class="text-danger">This movie is not available for rent.</p>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 }
+
