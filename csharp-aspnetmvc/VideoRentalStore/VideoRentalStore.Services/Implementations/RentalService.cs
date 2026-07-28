@@ -20,6 +20,16 @@ public class RentalService : IRentalService
 
     public void RentMovie(int userId, int movieId)
     {
+        //check if the movie is rented and not returned yet
+        var existingRental = _rentalRepository
+            .GetByUserId(userId)
+            .FirstOrDefault(r => r.MovieId == movieId && r.ReturnedOn == default);
+
+        if (existingRental != null)
+        {
+            throw new InvalidOperationException("You have already rented this movie");
+        }
+
         var rental = new Rental
         {
             UserId = userId,

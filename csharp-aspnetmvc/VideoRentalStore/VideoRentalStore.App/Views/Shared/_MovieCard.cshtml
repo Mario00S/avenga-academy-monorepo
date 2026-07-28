@@ -1,0 +1,28 @@
+﻿@model Movie
+
+<div class="card h-100 shadow-sm">
+    <img src="~/images/placeholder.jpg" class="card-img-top" alt="Movie poster placeholder">
+
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text"><strong>Genre:</strong> @Model.Genre</p>
+        <p class="card-text"><strong>Available:</strong> @(Model.IsAvailable ? "Yes" : "No")</p>
+    </div>
+
+    <div class="card-footer d-flex justify-content-between">
+        <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">Details</a>
+
+        @if (Context.Request.Cookies["UserId"] != null && Model.IsAvailable)
+        {
+            <a asp-controller="Movies" asp-action="Rent" asp-route-id="@Model.Id" class="btn btn-success">Rent</a>
+        }
+        else if (!Model.IsAvailable)
+        {
+            <span class="text-danger">Not available</span>
+        }
+        else
+        {
+            <a asp-controller="User" asp-action="Login" class="btn btn-primary">Login to Rent</a>
+        }
+    </div>
+</div>
