@@ -13,4 +13,7 @@ public class Movie : BaseEntity
     public TimeSpan Length { get; set; }
     public int AgeRestriction { get; set; }
     public int Quantity { get; set; }
+    // ICollection is used instead of IEnumerable so EF Core can manage add/remove operations on the Cast collection.
+    public ICollection<Cast> CastMembers { get; set; } = new List<Cast>();
+
 }

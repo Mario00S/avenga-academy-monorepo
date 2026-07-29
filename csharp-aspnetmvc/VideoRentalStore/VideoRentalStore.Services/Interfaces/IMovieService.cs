@@ -11,5 +11,6 @@ public interface IMovieService
     //user can be nullable doing this due to error in the service
     IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize);
     void MarkAvailable(int movieId);
+    IEnumerable<Cast> GetCastForMovie(int movieId);
 }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VideoRentalStore.Domain.Entities;
+using VideoRentalStore.Mapper;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.App.Controllers
@@ -96,7 +97,11 @@ namespace VideoRentalStore.App.Controllers
             {
                 return NotFound();
             }
-            return View(movie);
+
+            var cast = _movieService.GetCastForMovie(id);
+            var viewModel = MovieMapper.MapMovieToDetails(movie, cast);
+
+            return View(viewModel);
         }
     }
 }

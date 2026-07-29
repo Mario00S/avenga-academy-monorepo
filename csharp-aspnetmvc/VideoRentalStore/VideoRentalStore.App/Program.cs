@@ -12,9 +12,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 builder.Services.AddSingleton<IMovieRepository, InMemoryMovieRepository>();
 builder.Services.AddSingleton<IRentalRepository, InMemoryRentalRepository>();
+builder.Services.AddSingleton<ICastRepository, InMemoryCastRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
+builder.Services.AddScoped<ICastService, CastService>();
 
 var app = builder.Build();
 

@@ -7,10 +7,12 @@ namespace VideoRentalStore.Services.Implementations;
 public class MovieService : IMovieService
 {
     private readonly IMovieRepository _repository;
+    private readonly ICastRepository _castRepository;
 
-    public MovieService(IMovieRepository repository)
+    public MovieService(IMovieRepository repository, ICastRepository castRepository)
     {
         _repository = repository;
+        _castRepository = castRepository;
     }
 
     public IEnumerable<Movie> GetAvailableMovies()
@@ -71,6 +73,11 @@ public class MovieService : IMovieService
         }
 
         _repository.Update(movie);
+    }
+
+    public IEnumerable<Cast> GetCastForMovie(int movieId)
+    {
+        return _castRepository.GetByMovieId(movieId);
     }
 
 }

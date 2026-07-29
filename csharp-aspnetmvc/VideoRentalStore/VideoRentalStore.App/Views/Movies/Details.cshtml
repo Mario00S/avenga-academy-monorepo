@@ -1,27 +1,47 @@
-﻿@model Movie
+﻿@model VideoRentalStore.Models.ViewModels.MovieDetailsViewModel
 
-<h2>@Model.Title</h2>
+<h2>@Model.Movie.Title</h2>
 
 <div class="card mb-4">
-    @* <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title poster"> *@
+    @* <img src="@Model.Movie.ImageUrl" class="card-img-top" alt="@Model.Movie.Title poster"> *@
     <div class="card-body">
-        <h5 class="card-title">@Model.Title</h5>
-        <p class="card-text"><strong>Genre:</strong> @Model.Genre</p>
-        <p class="card-text"><strong>Language:</strong> @Model.Language</p>
-        <p class="card-text"><strong>Release Date:</strong> @Model.ReleaseDate.ToShortDateString()</p>
-        <p class="card-text"><strong>Length:</strong> @Model.Length minutes</p>
-        <p class="card-text"><strong>Quantity:</strong> @Model.Quantity</p>
-        <p class="card-text"><strong>Available:</strong> @(Model.IsAvailable ? "Yes" : "No")</p>
+        <h5 class="card-title">@Model.Movie.Title</h5>
+        <p class="card-text"><strong>Genre:</strong> @Model.Movie.Genre</p>
+        <p class="card-text"><strong>Language:</strong> @Model.Movie.Language</p>
+        <p class="card-text"><strong>Release Date:</strong> @Model.Movie.ReleaseDate.ToShortDateString()</p>
+        <p class="card-text"><strong>Length:</strong> @Model.Movie.Length minutes</p>
+        <p class="card-text"><strong>Quantity:</strong> @Model.Movie.Quantity</p>
+        <p class="card-text"><strong>Available:</strong> @(Model.Movie.IsAvailable ? "Yes" : "No")</p>
     </div>
 </div>
 
+<!-- Cast Section -->
+<div class="mt-4">
+    <h4>Cast</h4>
+    @if (Model.CastMembers.Any())
+    {
+        <ul class="list-group">
+            @foreach (var cast in Model.CastMembers)
+            {
+                <li class="list-group-item">
+                    <strong>@cast.Role:</strong> @cast.Name
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No cast information available.</p>
+    }
+</div>
+
+<!-- Rent / Navigation -->
 <div class="mt-3">
-    @if (Model.IsAvailable)
+    @if (Model.Movie.IsAvailable)
     {
         if (Context.Request.Cookies["UserId"] != null)
         {
-            <!-- Link to Rent (GET) confirmation page -->
-            <a asp-controller="Movies" asp-action="Rent" asp-route-id="@Model.Id" class="btn btn-success">Rent</a>
+            <a asp-controller="Movies" asp-action="Rent" asp-route-id="@Model.Movie.Id" class="btn btn-success">Rent</a>
         }
         else
         {

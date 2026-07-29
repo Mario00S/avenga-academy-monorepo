@@ -4,10 +4,10 @@ using System.Text;
 
 namespace VideoRentalStore.Domain.Enums
 {
-    public enum Part
+    public enum CastRole
     {
-        Lead = 0,
-        Supporting = 1,
-        Cameo = 2
+        Actor = 0,
+        Director = 1,
+        Producer = 2
     }
 }

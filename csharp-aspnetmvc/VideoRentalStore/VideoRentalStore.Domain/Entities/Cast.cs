@@ -5,7 +5,8 @@ namespace VideoRentalStore.Domain.Entities;
 
 public class Cast : BaseEntity
 {
-    public string MovieId { get; set; }
+    public int MovieId { get; set; }
+    public Movie Movie { get; set; } //used for navigation
     public string Name { get; set; }
-    public Part Part { get; set; }
+    public CastRole Role { get; set; }
 }
