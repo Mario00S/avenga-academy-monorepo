@@ -12,7 +12,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 builder.Services.AddSingleton<IMovieRepository, InMemoryMovieRepository>();
 builder.Services.AddSingleton<IRentalRepository, InMemoryRentalRepository>();
-builder.Services.AddSingleton<ICastRepository, InMemoryCastRepository>();
+builder.Services.AddSingleton<ICastRepository>(sp =>
+{
+    var movieRepo = sp.GetRequiredService<IMovieRepository>();
+    return new InMemoryCastRepository(movieRepo.GetAll());
+});
+// Register CastRepository with factory so it receives movies entity to be investigated, probably due to inMemory aproach atm
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentalService, RentalService>();

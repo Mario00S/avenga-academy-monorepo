@@ -281,7 +281,19 @@ public class InMemoryCastRepository : InMemoryRepository<Cast>, ICastRepository
 
     public IEnumerable<Cast> GetByMovieId(int movieId)
     {
-        return _entities.Where(c => c.Movie.Id == movieId);
+        return _entities.Where(c => c.Movie != null && c.Movie.Id == movieId);
     }
+    // We are querying the in-memory list of Cast objects (_entities).
+    // Each Cast has a navigation property "Movie" that points back to the Movie it belongs to.
+    // In EF Core, navigation properties are automatically populated when you query with Include().
+    // Here, we mimic that behavior by wiring Cast.Movie during seeding.
+    //
+    // The check "c.Movie != null" is defensive coding:
+    // - If Cast.Movie was not set during seeding, it would be null.
+    // - Accessing c.Movie.Id without this guard would throw a NullReferenceException.
+    //
+    // Once we confirm Movie is not null, we filter by Movie.Id to return only
+    // the cast members that belong to the requested movie.
+    //refers to this public IEnumerable<Cast> GetByMovieId(int movieId)
 }
 
