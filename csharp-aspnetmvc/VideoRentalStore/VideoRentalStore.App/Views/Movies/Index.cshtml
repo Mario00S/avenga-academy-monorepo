@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Movie>
+﻿@model VideoRentalStore.Models.ViewModels.MovieFilterViewModel
 @* @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
@@ -7,20 +7,42 @@
 {
     <div class="alert alert-success">@TempData["Success"]</div>
 } keeping at as a reference to what the partial view does*@
+
+
 <partial name="_Alerts" />
 
-
-
-<h2>Available Movies</h2>
-
 <div class="row">
-    @foreach (var movie in Model)
-    {
-        <div class="col-md-3 mb-4">
-            <partial name="_MovieCard" model="movie"/>
-                </div>                   
-    }
+    <!-- Sidebar filters -->
+    <div class="col-md-3">
+        <h4>Filters</h4>
+        <form method="get" asp-action="Filter">
+            <input type="text" name="title" value="@Model.TitleFilter" placeholder="Search by title" class="form-control mb-2" />
+
+            <select asp-for="GenreFilter" asp-items="@(new SelectList(Enum.GetValues(typeof(Genre))) )" class="form-select mb-2">
+                <option value="">-- Select Genre --</option>
+            </select>
+
+            <input type="text" name="castName" value="@Model.CastFilter" placeholder="Search by cast" class="form-control mb-2" />
+
+            <button type="submit" class="btn btn-primary w-100">Apply</button>
+            <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Clear Filters</a>
+        </form>
+    </div>
+
+    <!-- Movie results -->
+    <div class="col-md-9">
+        <h2>Available Movies</h2>
+        <div class="row">
+            @foreach (var movie in Model.Movies)
+            {
+                <div class="col-md-3 mb-4">
+                    <partial name="_MovieCard" model="movie" />
+                </div>
+            }
+        </div>
+
+        <partial name="_Pagination" model="Model" />
+    </div>
 </div>
 
-<partial name="_Pagination"/>
 

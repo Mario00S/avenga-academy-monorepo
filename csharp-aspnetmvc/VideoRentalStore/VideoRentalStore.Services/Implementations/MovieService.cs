@@ -1,5 +1,6 @@
 ﻿using VideoRentalStore.DataAccess.Interfaces;
 using VideoRentalStore.Domain.Entities;
+using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.Services.Implementations;
@@ -44,12 +45,6 @@ public class MovieService : IMovieService
         }
         _repository.Update(movie);
     }
-    public IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize)
-    {
-        return _repository.GetAvailableMovies()
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize);
-    }
 
     public IEnumerable<Movie> GetAllMovies()
     {
@@ -78,6 +73,67 @@ public class MovieService : IMovieService
     public IEnumerable<Cast> GetCastForMovie(int movieId)
     {
         return _castRepository.GetByMovieId(movieId);
+    }
+
+    public IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize)
+    {
+        return _repository.GetAvailableMovies()
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+    }
+
+
+    public IEnumerable<Movie> FilterMovies(string? title, Genre? genre, string? castName)
+    {
+        Console.WriteLine($"DEBUG Service Inputs: title={title}, genre={genre}, castName={castName}");
+
+        var movies = _repository.GetAvailableMovies();
+
+        // 🔹 Cast filter using GetCastForMovie
+        if (!string.IsNullOrWhiteSpace(castName))
+        {
+            movies = movies.Where(m =>
+            {
+                var castMembers = GetCastForMovie(m.Id).ToList();
+                Console.WriteLine($"DEBUG {m.Title} cast = {string.Join(", ", castMembers.Select(c => c.Name))}");
+                return castMembers.Any(c => c.Name.Contains(castName, StringComparison.OrdinalIgnoreCase));
+            });
+        }
+
+        // 🔹 Title filter
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            movies = movies.Where(m => m.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // 🔹 Genre filter
+        if (genre.HasValue)
+        {
+            movies = movies.Where(m => m.Genre == genre.Value);
+        }
+
+        var result = movies.ToList();
+        Console.WriteLine($"DEBUG Result count: {result.Count}");
+
+        if (!result.Any())
+        {
+            Console.WriteLine("DEBUG: No movies matched the filters.");            
+        }
+        return result;
+    }
+
+
+
+
+    public IEnumerable<Movie> GetPagedFilteredMovies
+        (string? title, Genre? genre, string? castName, int pageNumber, int pageSize)
+    {
+        var filteredMovies = FilterMovies(title, genre, castName);
+
+        return filteredMovies
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
 }

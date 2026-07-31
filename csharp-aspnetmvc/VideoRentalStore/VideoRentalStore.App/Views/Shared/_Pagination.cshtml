@@ -1,30 +1,62 @@
-﻿@{
-    int currentPage = ViewBag.Page ?? 1;
-    int totalPages = ViewBag.TotalPages ?? 1;
-    string actionName = ViewBag.ActionName ?? "Index"; // optional flexibility
+﻿@model VideoRentalStore.Models.ViewModels.MovieFilterViewModel
+
+@{
+    int currentPage = Model.CurrentPage;
+    int totalPages = Model.TotalPages;
+
+    // Decide which action to call: Index (no filters) or Filter (filters active)
+    string actionName = string.IsNullOrEmpty(Model.TitleFilter)
+                        && !Model.GenreFilter.HasValue
+                        && string.IsNullOrEmpty(Model.CastFilter)
+        ? "Index"
+        : "Filter";
 }
 
-<nav aria-label="Pagination">
-    <ul class="pagination justify-content-center">
-        @if (currentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage - 1)">Previous</a>
-            </li>
-        }
+@if (totalPages > 1)
+{
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+            @if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(currentPage - 1)"
+                       asp-route-title="@Model.TitleFilter"
+                       asp-route-genre="@Model.GenreFilter"
+                       asp-route-castName="@Model.CastFilter">
+                        Previous
+                    </a>
+                </li>
+            }
 
-        @for (int i = 1; i <= totalPages; i++)
-        {
-            <li class="page-item @(i == currentPage ? "active" : "")">
-                <a class="page-link" asp-action="@actionName" asp-route-page="@i">@i</a>
-            </li>
-        }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@i"
+                       asp-route-title="@Model.TitleFilter"
+                       asp-route-genre="@Model.GenreFilter"
+                       asp-route-castName="@Model.CastFilter">
+                        @i
+                    </a>
+                </li>
+            }
 
-        @if (currentPage < totalPages)
-        {
-            <li class="page-item">
-                <a class="page-link" asp-action="@actionName" asp-route-page="@(currentPage + 1)">Next</a>
-            </li>
-        }
-    </ul>
-</nav>
+            @if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-action="@actionName"
+                       asp-route-page="@(currentPage + 1)"
+                       asp-route-title="@Model.TitleFilter"
+                       asp-route-genre="@Model.GenreFilter"
+                       asp-route-castName="@Model.CastFilter">
+                        Next
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
