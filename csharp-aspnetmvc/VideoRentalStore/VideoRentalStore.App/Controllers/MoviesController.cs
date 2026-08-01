@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VideoRentalStore.Domain.Entities;
+using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Mapper;
+using VideoRentalStore.Models.ViewModels;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.App.Controllers
@@ -24,10 +26,28 @@ namespace VideoRentalStore.App.Controllers
             int pageSize = 10;
             var movies = _movieService.GetPagedAvailableMovies(page, pageSize);
             int totalMovies = _movieService.GetAvailableMovies().Count();
-            ViewBag.Page = page;
-            ViewBag.TotalPages = (int)Math.Ceiling((double)totalMovies / pageSize);
-            return View(movies);
+
+            var vm = MovieMapper.MapMoviesToFilterViewModel(movies, page, totalMovies);
+            return View(vm);
         }
+
+        [HttpGet("filter")]
+        public IActionResult Filter(string? title, Genre? GenreFilter, string? castName, int page = 1)
+        {
+            Console.WriteLine($"DEBUG: title={title}, genre={GenreFilter}, castName={castName}");
+            int pageSize = 10;
+            var movies = _movieService.GetPagedFilteredMovies(title, GenreFilter, castName, page, pageSize);
+            int totalMovies = _movieService.FilterMovies(title, GenreFilter, castName).Count();
+
+            if (totalMovies == 0)
+            {
+                TempData["Error"] = "No movies matched your search criteria.";
+            }
+
+            var vm = MovieMapper.MapMoviesToFilterViewModel(movies, page, totalMovies, title, GenreFilter, castName);
+            return View("Index", vm);
+        }
+
 
         [HttpGet("rent/{id}")]
         public IActionResult Rent(int id)
