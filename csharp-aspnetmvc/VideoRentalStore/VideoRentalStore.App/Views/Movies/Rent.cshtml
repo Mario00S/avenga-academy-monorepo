@@ -15,6 +15,11 @@
     <p class="text-danger">You have already rented this movie and must return it before renting again.</p>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 }
+else if (ViewBag.CannotRent == true)
+{
+    <p class="text-danger">You cannot rent this movie. Subscription expired or rental limit reached.</p>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}
 else if (Model.IsAvailable)
 {
     if (Context.Request.Cookies["UserId"] != null)

@@ -6,5 +6,6 @@ namespace VideoRentalStore.DataAccess.Interfaces
     {
         IEnumerable<Rental> GetByUserId(int userId);
         IEnumerable<Rental> GetByMovieId(int movieId);
+        int GetMonthlyRentalCount(int userId, DateTime monthReference);
     }
 }

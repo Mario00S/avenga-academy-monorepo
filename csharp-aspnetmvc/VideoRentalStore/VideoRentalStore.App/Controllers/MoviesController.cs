@@ -10,14 +10,17 @@ namespace VideoRentalStore.App.Controllers
     [Route("movies")]
     public class MoviesController : Controller
     {
-
+        //if there are  5+ services it's a sign that the controller is owerpopulated
+        //fine for now
         private readonly IRentalService _rentalService;
         private readonly IMovieService _movieService;
+        private readonly IUserService _userService;
 
-        public MoviesController(IMovieService movieService, IRentalService rentalService)
+        public MoviesController(IMovieService movieService, IRentalService rentalService, IUserService userService)
         {
             _rentalService = rentalService;
             _movieService = movieService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -61,9 +64,17 @@ namespace VideoRentalStore.App.Controllers
 
             int userId = int.Parse(userIdCookie);
 
+            var user = _userService.GetById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             var movie = _movieService.GetMovieById(id);
             if (movie == null)
+            {
                 return NotFound();
+            }
 
             // Check if this user already rented the movie
             var existingRental = _rentalService
@@ -73,6 +84,11 @@ namespace VideoRentalStore.App.Controllers
             if (existingRental != null)
             {
                 ViewBag.AlreadyRented = true;
+            }
+
+            if (!_userService.CanRent(user))
+            {
+                ViewBag.CannotRent = true;
             }
 
             return View(movie);
@@ -92,6 +108,20 @@ namespace VideoRentalStore.App.Controllers
             }
             int userId = int.Parse(userIdCookie);
 
+            var user = _userService.GetById(userId);
+            if (user == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index");
+            }
+
+            // Enforce subscription rules before renting
+            if (!_userService.CanRent(user))
+            {
+                TempData["Error"] = "You cannot rent this movie. Subscription expired or rental limit reached.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 //add movie - rent movie
@@ -100,6 +130,12 @@ namespace VideoRentalStore.App.Controllers
                 //mark as unavailable
                 _movieService.RentMovie(id, userId);
                 TempData["Sucess"] = "Movie Rented Successfully";
+
+                // If Free tier, decrement remaining rentals
+                _userService.DecrementFreeRental(user);
+                // Debug: re-fetch the user to confirm persistence
+                var updatedUser = _userService.GetById(user.Id);
+                Console.WriteLine($"Remaining rentals after update: {updatedUser.RemainingFreeRentals}");
             }
             catch (InvalidOperationException ex)
             {

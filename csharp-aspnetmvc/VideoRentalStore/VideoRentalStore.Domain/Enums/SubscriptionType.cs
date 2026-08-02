@@ -8,7 +8,6 @@ namespace VideoRentalStore.Domain.Enums
     {
         Free = 0,
         Basic = 1,
-        Premium = 2,
-        VIP = 3
+        Premium = 2     
     }
 }
