@@ -10,4 +10,5 @@ public interface IUserService
     bool CanRent(User user);
     void Update(User user);
     void DecrementFreeRental(User user);
+    void DowngradeIfExpired(User user);
 }

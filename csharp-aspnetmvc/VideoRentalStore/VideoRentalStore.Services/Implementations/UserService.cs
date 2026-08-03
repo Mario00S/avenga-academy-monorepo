@@ -17,9 +17,16 @@ public class UserService : IUserService
     public User? ValidateUser(string cardNumber)
     {
         var user = _userRepository.GetByCardNumber(cardNumber);
-        if (user == null || user.IsSubscriptionExpired)
+        if (user == null)
         {
             return null;
+        }
+
+        if (user.IsSubscriptionExpired)
+        {
+            user.SubscriptionType = SubscriptionType.Free;
+            user.SubscriptionExpiresAt = null;
+            _userRepository.Update(user);
         }
         return user;
     }
@@ -34,13 +41,24 @@ public class UserService : IUserService
         return _userRepository.GetById(id);
     }
 
-    public bool CanRent(User user)
+    public void DowngradeIfExpired(User user)
     {
-        // Handle expired subscriptions
         if (user.IsSubscriptionExpired)
         {
             user.SubscriptionType = SubscriptionType.Free;
+            user.SubscriptionExpiresAt = null;
+            _userRepository.Update(user);
         }
+    }
+
+    public bool CanRent(User user)
+    {
+        //// Handle expired subscriptions
+        ///moved into DowngradeIfExpired
+        //if (user.IsSubscriptionExpired)
+        //{
+        //    user.SubscriptionType = SubscriptionType.Free;
+        //}
 
         switch (user.SubscriptionType)
         {

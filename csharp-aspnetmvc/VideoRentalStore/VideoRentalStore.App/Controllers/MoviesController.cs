@@ -115,6 +115,9 @@ namespace VideoRentalStore.App.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Ensure subscription is valid before checking rental rules
+            _userService.DowngradeIfExpired(user);
+
             // Enforce subscription rules before renting
             if (!_userService.CanRent(user))
             {
