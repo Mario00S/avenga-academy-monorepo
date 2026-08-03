@@ -31,8 +31,11 @@ namespace VideoRentalStore.App.Controllers
         public IActionResult Login(string cardNumber)
         {
             var user = _userService.ValidateUser(cardNumber);
-            if (user != null && !user.IsSubscriptionExpired)
+            if (user != null)
             {
+                //_userService.DowngradeIfExpired(user);
+                //handled in UserService - ValidateUserMethod
+
                 Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
                 {
                     HttpOnly = true,
