@@ -22,12 +22,7 @@ public class UserService : IUserService
             return null;
         }
 
-        if (user.IsSubscriptionExpired)
-        {
-            user.SubscriptionType = SubscriptionType.Free;
-            user.SubscriptionExpiresAt = null;
-            _userRepository.Update(user);
-        }
+        DowngradeIfExpired(user);
         return user;
     }
     //not needed unless i make admin menu or profile page
