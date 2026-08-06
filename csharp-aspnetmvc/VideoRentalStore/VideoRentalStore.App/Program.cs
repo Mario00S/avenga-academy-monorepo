@@ -15,14 +15,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VideoRentalDbContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IUserRepository, EfRepository<User>>();
-builder.Services.AddScoped<IMovieRepository, EfRepository<Movie>>();
-builder.Services.AddScoped<IRentalRepository, EfRepository<Rental>>();
-builder.Services.AddScoped<ICastRepository, EfRepository<Cast>>();
-builder.Services.AddScoped<IRepository<Cast>, EfRepository<Cast>>();
+builder.Services.AddScoped<IUserRepository, EfUserRepository>();
+builder.Services.AddScoped<IMovieRepository, EfMovieRepository>();
+builder.Services.AddScoped<IRentalRepository, EfRentalRepository>();
+builder.Services.AddScoped<ICastRepository, EfCastRepository>();
 
 
 
+//comenting due to Ef usage instead
 //Dependency Injection - trying with add signleton because of inMemory Db
 //builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 //builder.Services.AddSingleton<IMovieRepository, InMemoryMovieRepository>();
@@ -33,6 +33,7 @@ builder.Services.AddScoped<IRepository<Cast>, EfRepository<Cast>>();
 //    return new InMemoryCastRepository(movieRepo.GetAll());
 //});
 // Register CastRepository with factory so it receives movies entity to be investigated, probably due to inMemory aproach atm
+
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
