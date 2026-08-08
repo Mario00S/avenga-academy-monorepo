@@ -31,11 +31,50 @@
 
                         <!-- User menu via ViewComponent -->
                         @await Component.InvokeAsync("UserMenu")
+
+                        <li class="nav-item">
+                            <button id="themeToggle" class="btn btn-outline-light btn-sm">
+                                <i class="bi bi-moon"></i>
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
+    <!-- Hero Carousel -->
+    <div class="container my-4">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner text-center">
+
+                <!-- Inception -->
+                <div class="carousel-item active" style="background-image: url('/images/inception.jpg');">
+                    <div class="d-flex justify-content-center">
+                        <img src="~/images/inception.jpg" class="carousel-poster" alt="Inception">
+                    </div>
+                </div>
+
+                <!-- The Matrix -->
+                <div class="carousel-item" style="background-image: url('/images/matrix.jpg');">
+                    <div class="d-flex justify-content-center">
+                        <img src="~/images/matrix.jpg" class="carousel-poster" alt="The Matrix">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+
+
 
     <!-- Main Content -->
     <div class="container my-4 flex-grow-1">
@@ -56,6 +95,20 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+            const toggle = document.getElementById('themeToggle');
+            toggle.addEventListener('click', () => {
+                const html = document.documentElement;
+                const current = html.getAttribute('data-bs-theme') || 'light';
+                const next = current === 'light' ? 'dark' : 'light';
+                html.setAttribute('data-bs-theme', next);
+                localStorage.setItem('theme', next);
+                toggle.innerHTML = next === 'light' ? '<i class="bi bi-moon"></i>' : '<i class="bi bi-sun"></i>';
+            });
+            // Load saved preference
+            document.documentElement.setAttribute('data-bs-theme', localStorage.getItem('theme') || 'light');
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
