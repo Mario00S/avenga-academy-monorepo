@@ -1,6 +1,8 @@
 ﻿using VideoRentalStore.DataAccess.Interfaces;
 using VideoRentalStore.Domain.Entities;
 using VideoRentalStore.Domain.Enums;
+using VideoRentalStore.Mapper;
+using VideoRentalStore.Models.Dtos;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.Services.Implementations;
@@ -16,17 +18,84 @@ public class MovieService : IMovieService
         _castRepository = castRepository;
     }
 
-    public IEnumerable<Movie> GetAvailableMovies()
+    /// <summary>
+    /// Gets movie details by identifier.
+    /// </summary>
+    public MovieDetailsDto? GetById(int id)
+    {
+        var movie = _repository.GetById(id);
+        if (movie is null)
+        {
+            return null;
+        }
+
+        return MovieMapper.MapToDetailsDto(movie);
+    }
+
+    /// <summary>
+    /// Gets all movies as list DTOs.
+    /// </summary>
+    public List<MovieListDto> GetAll()
+    {
+        var movies = _repository.GetAll();
+        return MovieMapper.MapToListDto(movies);
+    }
+
+    /// <summary>
+    /// Creates a movie from a details DTO.
+    /// </summary>
+    public void Create(MovieDetailsDto dto)
+    {
+        var movie = MovieMapper.MapToEntity(dto);
+        _repository.Add(movie);
+    }
+
+    /// <summary>
+    /// Updates a movie from a details DTO.
+    /// </summary>
+    public void Update(MovieDetailsDto dto)
+    {
+        var movie = MovieMapper.MapToEntity(dto);
+        _repository.Update(movie);
+    }
+
+    /// <summary>
+    /// Deletes a movie by identifier.
+    /// </summary>
+    public void Delete(int id)
+    {
+        _repository.Delete(id);
+    }
+
+    /// <summary>
+    /// Gets all movies as list DTOs.
+    /// </summary>
+    public List<MovieListDto> GetAllMovies()
+    {
+        return GetAll();
+    }
+
+    /// <summary>
+    /// Gets available movies as list DTOs.
+    /// </summary>
+    public List<MovieListDto> GetAvailableMovies()
     {
         // Business rule: only return movies marked as available
-        return _repository.GetAll().Where(m => m.IsAvailable);
+        var movies = _repository.GetAll().Where(m => m.IsAvailable);
+        return MovieMapper.MapToListDto(movies);
     }
 
-    public Movie GetMovieById(int id)
+    /// <summary>
+    /// Gets movie details by identifier.
+    /// </summary>
+    public MovieDetailsDto? GetMovieById(int id)
     {
-        return _repository.GetById(id);
+        return GetById(id);
     }
 
+    /// <summary>
+    /// Decrements quantity and marks the movie unavailable when stock reaches zero.
+    /// </summary>
     public void RentMovie(int movieId, int? userId)
     {
         if (userId == null)
@@ -34,8 +103,8 @@ public class MovieService : IMovieService
             throw new UnauthorizedAccessException("User must be logged in to remnt movies");
         }
         var movie = _repository.GetById(movieId);
-        if (movie == null || movie.Quantity <= 0) 
-        { 
+        if (movie == null || movie.Quantity <= 0)
+        {
             throw new InvalidOperationException("Movie not available");
         }
         movie.Quantity--;
@@ -46,11 +115,9 @@ public class MovieService : IMovieService
         _repository.Update(movie);
     }
 
-    public IEnumerable<Movie> GetAllMovies()
-    {
-        return _repository.GetAll();
-    }
-
+    /// <summary>
+    /// Increments quantity and marks the movie available.
+    /// </summary>
     public void MarkAvailable(int movieId)
     {
         var movie = _repository.GetById(movieId);
@@ -63,27 +130,64 @@ public class MovieService : IMovieService
 
         if (movie.Quantity > 0)
         {
-        movie.IsAvailable = true;
-
+            movie.IsAvailable = true;
         }
 
         _repository.Update(movie);
     }
 
-    public IEnumerable<Cast> GetCastForMovie(int movieId)
+    /// <summary>
+    /// Gets cast members for a movie as DTOs.
+    /// </summary>
+    public List<CastDto> GetCastForMovie(int movieId)
     {
-        return _castRepository.GetByMovieId(movieId);
+        return _castRepository.GetByMovieId(movieId)
+            .Select(c => new CastDto
+            {
+                Name = c.Name,
+                Role = c.Role.ToString()
+            })
+            .ToList();
     }
 
-    public IEnumerable<Movie> GetPagedAvailableMovies(int pageNumber, int pageSize)
+    /// <summary>
+    /// Gets a page of available movies as list DTOs.
+    /// </summary>
+    public List<MovieListDto> GetPagedAvailableMovies(int pageNumber, int pageSize)
     {
-        return _repository.GetAvailableMovies()
+        var movies = _repository.GetAvailableMovies()
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize);
+
+        return MovieMapper.MapToListDto(movies);
     }
 
+    /// <summary>
+    /// Filters available movies and returns list DTOs.
+    /// </summary>
+    public List<MovieListDto> FilterMovies(string? title, Genre? genre, string? castName)
+    {
+        var result = FilterDomainMovies(title, genre, castName);
+        return MovieMapper.MapToListDto(result);
+    }
 
-    public IEnumerable<Movie> FilterMovies(string? title, Genre? genre, string? castName)
+    /// <summary>
+    /// Gets a page of filtered movies as list DTOs.
+    /// </summary>
+    public List<MovieListDto> GetPagedFilteredMovies(
+        string? title, Genre? genre, string? castName, int pageNumber, int pageSize)
+    {
+        var filteredMovies = FilterDomainMovies(title, genre, castName);
+
+        var paged = filteredMovies
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return MovieMapper.MapToListDto(paged);
+    }
+
+    private List<Movie> FilterDomainMovies(string? title, Genre? genre, string? castName)
     {
         Console.WriteLine($"DEBUG Service Inputs: title={title}, genre={genre}, castName={castName}");
 
@@ -117,24 +221,9 @@ public class MovieService : IMovieService
 
         if (!result.Any())
         {
-            Console.WriteLine("DEBUG: No movies matched the filters.");            
+            Console.WriteLine("DEBUG: No movies matched the filters.");
         }
+
         return result;
     }
-
-
-
-
-    public IEnumerable<Movie> GetPagedFilteredMovies
-        (string? title, Genre? genre, string? castName, int pageNumber, int pageSize)
-    {
-        var filteredMovies = FilterMovies(title, genre, castName);
-
-        return filteredMovies
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-    }
-
 }
-

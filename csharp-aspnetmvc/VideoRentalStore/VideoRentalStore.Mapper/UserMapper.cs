@@ -1,10 +1,46 @@
 ﻿using VideoRentalStore.Domain.Entities;
+using VideoRentalStore.Domain.Enums;
+using VideoRentalStore.Models.Dtos;
 using VideoRentalStore.Models.ViewModels;
 
 namespace VideoRentalStore.Mapper;
 
 public static class UserMapper
 {
+    public static UserDto MapToDto(User user)
+    {
+        return new UserDto
+        {
+            Id = user.Id,
+            FullName = user.FullName,
+            Age = user.Age,
+            CardNumber = user.CardNumber,
+            CreatedOn = user.CreatedOn,
+            SubscriptionType = user.SubscriptionType.ToString(),
+            IsSubscriptionExpired = user.IsSubscriptionExpired
+        };
+    }
+
+    public static List<UserDto> MapToDto(IEnumerable<User> users)
+    {
+        return users?.Select(MapToDto).ToList() ?? new List<UserDto>();
+    }
+
+    public static User MapToEntity(UserDto dto)
+    {
+        return new User
+        {
+            Id = dto.Id,
+            FullName = dto.FullName,
+            Age = dto.Age,
+            CardNumber = dto.CardNumber,
+            CreatedOn = dto.CreatedOn,
+            SubscriptionType = string.IsNullOrWhiteSpace(dto.SubscriptionType)
+                ? default
+                : Enum.Parse<SubscriptionType>(dto.SubscriptionType)
+        };
+    }
+
     public static UserProfileViewModel MapUserToProfile(User user, IEnumerable<Rental> rentals, IEnumerable<Movie> movies)
     {
         var rentedMovies = rentals.Select(r =>
@@ -31,5 +67,4 @@ public static class UserMapper
             RentedMovies = rentedMovies
         };
     }
-
 }

@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VideoRentalStore.DataAccess\VideoRentalStore.DataAccess.csproj" />
+    <ProjectReference Include="..\VideoRentalStore.Mapper\VideoRentalStore.Mapper.csproj" />
+    <ProjectReference Include="..\VideoRentalStore.Models\VideoRentalStore.Models.csproj" />
   </ItemGroup>
 
 </Project>

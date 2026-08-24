@@ -1,9 +1,11 @@
-﻿using VideoRentalStore.DataAccess.Interfaces;
-using VideoRentalStore.Domain.Entities;
+﻿using VideoRentalStore.Models.Dtos;
 
 namespace VideoRentalStore.Services.Interfaces;
 
 public interface ICastService
 {
-    IEnumerable<Cast> GetCastByMovieId(int movieId);
+    /// <summary>
+    /// Gets cast members for a movie as DTOs.
+    /// </summary>
+    List<CastDto> GetCastByMovieId(int movieId);
 }
