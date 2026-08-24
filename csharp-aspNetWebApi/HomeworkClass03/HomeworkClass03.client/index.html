@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Books API Test</title>
+</head>
+<body>
+  <h1>Books API Tester</h1>
+
+  <!-- GET all or by index -->
+  <h2>Get Books</h2>
+  <input type="number" id="indexInput" placeholder="Index (optional)">
+  <button onclick="getBooks()">Get Books</button>
+  <table border="1" id="getTable"></table>
+
+  <!-- Search by author/title -->
+  <h2>Search Books</h2>
+  <input type="text" id="authorInput" placeholder="Author">
+  <input type="text" id="titleInput" placeholder="Title">
+  <button onclick="searchBooks()">Search</button>
+  <table border="1" id="searchTable"></table>
+
+  <!-- Insert new book -->
+  <h2>Add Book</h2>
+  <input type="text" id="newTitle" placeholder="Title">
+  <input type="text" id="newAuthor" placeholder="Author">
+  <input type="number" id="newYear" placeholder="Year">
+  <button onclick="addBook()">Add Book</button>
+  <table border="1" id="postTable"></table>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -67,3 +67,8 @@ appsettings.Local.json
 # Ignore vendor libraries restored by LibMan
 wwwroot/lib/
 
+# Local secrets
+secrets.json
+
+# Environment variable files
+.env
