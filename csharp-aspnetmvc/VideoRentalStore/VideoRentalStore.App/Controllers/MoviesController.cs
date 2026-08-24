@@ -2,6 +2,7 @@
 using VideoRentalStore.Domain.Entities;
 using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Mapper;
+using VideoRentalStore.Models.Dtos;
 using VideoRentalStore.Models.ViewModels;
 using VideoRentalStore.Services.Interfaces;
 
@@ -27,9 +28,10 @@ namespace VideoRentalStore.App.Controllers
         public IActionResult Index(int page = 1)
         {
             int pageSize = 10;
-            var movies = _movieService.GetPagedAvailableMovies(page, pageSize);
-            int totalMovies = _movieService.GetAvailableMovies().Count();
+            var movieDtos = _movieService.GetPagedAvailableMovies(page, pageSize);
+            int totalMovies = _movieService.GetAvailableMovies().Count;
 
+            var movies = movieDtos.Select(MovieMapper.MapToEntity);
             var vm = MovieMapper.MapMoviesToFilterViewModel(movies, page, totalMovies);
             return View(vm);
         }
@@ -39,14 +41,15 @@ namespace VideoRentalStore.App.Controllers
         {
             Console.WriteLine($"DEBUG: title={title}, genre={GenreFilter}, castName={castName}");
             int pageSize = 10;
-            var movies = _movieService.GetPagedFilteredMovies(title, GenreFilter, castName, page, pageSize);
-            int totalMovies = _movieService.FilterMovies(title, GenreFilter, castName).Count();
+            var movieDtos = _movieService.GetPagedFilteredMovies(title, GenreFilter, castName, page, pageSize);
+            int totalMovies = _movieService.FilterMovies(title, GenreFilter, castName).Count;
 
             if (totalMovies == 0)
             {
                 TempData["Error"] = "No movies matched your search criteria.";
             }
 
+            var movies = movieDtos.Select(MovieMapper.MapToEntity);
             var vm = MovieMapper.MapMoviesToFilterViewModel(movies, page, totalMovies, title, GenreFilter, castName);
             return View("Index", vm);
         }
@@ -70,8 +73,8 @@ namespace VideoRentalStore.App.Controllers
                 return NotFound();
             }
 
-            var movie = _movieService.GetMovieById(id);
-            if (movie == null)
+            var movieDto = _movieService.GetMovieById(id);
+            if (movieDto == null)
             {
                 return NotFound();
             }
@@ -79,7 +82,9 @@ namespace VideoRentalStore.App.Controllers
             // Check if this user already rented the movie
             var existingRental = _rentalService
                 .GetRentalsByUserId(userId)
-                .FirstOrDefault(r => r.MovieId == id && r.ReturnedOn == null);
+                .FirstOrDefault(r =>
+                    string.Equals(r.MovieTitle, movieDto.Title, StringComparison.OrdinalIgnoreCase)
+                    && r.ReturnedOn == null);
 
             if (existingRental != null)
             {
@@ -91,6 +96,7 @@ namespace VideoRentalStore.App.Controllers
                 ViewBag.CannotRent = true;
             }
 
+            var movie = MapDetailsDtoToMovie(movieDto);
             return View(movie);
         }
 
@@ -138,7 +144,7 @@ namespace VideoRentalStore.App.Controllers
                 _userService.DecrementFreeRental(user);
                 // Debug: re-fetch the user to confirm persistence
                 var updatedUser = _userService.GetById(user.Id);
-                Console.WriteLine($"Remaining rentals after update: {updatedUser.RemainingFreeRentals}");
+                Console.WriteLine($"Remaining rentals after update: user {updatedUser?.Id}, subscription {updatedUser?.SubscriptionType}");
             }
             catch (InvalidOperationException ex)
             {
@@ -151,16 +157,41 @@ namespace VideoRentalStore.App.Controllers
         [HttpGet("details/{id}")]
         public IActionResult Details(int id)
         {
-            var movie = _movieService.GetMovieById(id);
-            if (movie is null)
+            var movieDto = _movieService.GetMovieById(id);
+            if (movieDto is null)
             {
                 return NotFound();
             }
 
-            var cast = _movieService.GetCastForMovie(id);
+            var movie = MapDetailsDtoToMovie(movieDto);
+            var castDtos = _movieService.GetCastForMovie(id);
+            var cast = MapCastDtosToEntities(castDtos);
             var viewModel = MovieMapper.MapMovieToDetails(movie, cast);
 
             return View(viewModel);
+        }
+
+        private Movie MapDetailsDtoToMovie(MovieDetailsDto movieDto)
+        {
+            var movie = MovieMapper.MapToEntity(movieDto);
+            var listDto = _movieService.GetAllMovies().FirstOrDefault(m => m.Id == movieDto.Id);
+            if (listDto != null)
+            {
+                movie.IsAvailable = listDto.IsAvailable;
+            }
+
+            return movie;
+        }
+
+        private static IEnumerable<Cast> MapCastDtosToEntities(IEnumerable<CastDto> castDtos)
+        {
+            return castDtos.Select(c => new Cast
+            {
+                Name = c.Name,
+                Role = string.IsNullOrWhiteSpace(c.Role)
+                    ? default
+                    : Enum.Parse<CastRole>(c.Role)
+            });
         }
     }
 }
