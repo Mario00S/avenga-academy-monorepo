@@ -10,6 +10,7 @@ public static class BookMapper
         return new BookDto
         {
             Id = book.Id,
+            PageCount = book.PageCount,
             Title = book.Title,
             Isbn = book.Isbn,
             Year = book.Year,
