@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Models.ViewModels;
 using VideoRentalStore.Services.Interfaces;
 
@@ -80,18 +79,15 @@ namespace VideoRentalStore.App.Controllers
                 CardNumber = user.CardNumber,
                 CreatedOn = user.CreatedOn,
                 IsSubscriptionExpired = user.IsSubscriptionExpired,
-                SubscriptionType = string.IsNullOrWhiteSpace(user.SubscriptionType)
-                    ? default
-                    : Enum.Parse<SubscriptionType>(user.SubscriptionType),
+                SubscriptionType = user.SubscriptionType,
                 RentedMovies = rentals.Select(r =>
                 {
-                    var movie = movies.FirstOrDefault(m =>
-                        string.Equals(m.Title, r.MovieTitle, StringComparison.OrdinalIgnoreCase));
+                    var movie = movies.FirstOrDefault(m => m.Id == r.MovieId);
 
                     return new MovieViewModel
                     {
                         Title = r.MovieTitle ?? movie?.Title ?? "Unknown",
-                        Genre = movie?.Genre ?? "Unknown",
+                        Genre = movie?.Genre.ToString() ?? "Unknown",
                         RentedOn = r.RentedOn,
                         ReturnedOn = r.ReturnedOn,
                         RentalId = r.Id
@@ -114,8 +110,7 @@ namespace VideoRentalStore.App.Controllers
             int userId = int.Parse(userIdCookie);
 
             var rental = _rentalService.GetById(rentalId);
-            var userRentals = _rentalService.GetRentalsByUserId(userId);
-            if (rental == null || !userRentals.Any(r => r.Id == rentalId))
+            if (rental == null || rental.UserId != userId)
             {
                 TempData["Error"] = "Invalid rental or unauthorized action.";
                 return RedirectToAction("Profile");
@@ -125,12 +120,7 @@ namespace VideoRentalStore.App.Controllers
             _rentalService.ReturnMovie(rentalId);
 
             // Mark movie as available again
-            var movie = _movieService.GetAllMovies()
-                .FirstOrDefault(m => string.Equals(m.Title, rental.MovieTitle, StringComparison.OrdinalIgnoreCase));
-            if (movie != null)
-            {
-                _movieService.MarkAvailable(movie.Id);
-            }
+            _movieService.MarkAvailable(rental.MovieId);
 
             TempData["Success"] = "Movie returned successfully.";
             return RedirectToAction("Profile");

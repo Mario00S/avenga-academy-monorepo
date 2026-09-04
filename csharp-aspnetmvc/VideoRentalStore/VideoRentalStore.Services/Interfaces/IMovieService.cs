@@ -6,24 +6,24 @@ namespace VideoRentalStore.Services.Interfaces;
 public interface IMovieService
 {
     /// <summary>
-    /// Gets movie details by identifier.
+    /// Gets a movie by identifier as a DTO.
     /// </summary>
-    MovieDetailsDto? GetById(int id);
+    MovieDto? GetById(int id);
 
     /// <summary>
-    /// Gets all movies as list DTOs.
+    /// Gets all movies as DTOs.
     /// </summary>
-    List<MovieListDto> GetAll();
+    List<MovieDto> GetAll();
 
     /// <summary>
-    /// Creates a movie from a details DTO.
+    /// Creates a movie from a DTO.
     /// </summary>
-    void Create(MovieDetailsDto dto);
+    void Create(MovieDto dto);
 
     /// <summary>
-    /// Updates a movie from a details DTO.
+    /// Updates a movie from a DTO.
     /// </summary>
-    void Update(MovieDetailsDto dto);
+    void Update(MovieDto dto);
 
     /// <summary>
     /// Deletes a movie by identifier.
@@ -31,19 +31,19 @@ public interface IMovieService
     void Delete(int id);
 
     /// <summary>
-    /// Gets all movies as list DTOs.
+    /// Gets all movies as DTOs.
     /// </summary>
-    List<MovieListDto> GetAllMovies();
+    List<MovieDto> GetAllMovies();
 
     /// <summary>
-    /// Gets available movies as list DTOs.
+    /// Gets available movies as DTOs.
     /// </summary>
-    List<MovieListDto> GetAvailableMovies();
+    List<MovieDto> GetAvailableMovies();
 
     /// <summary>
-    /// Gets movie details by identifier.
+    /// Gets a movie by identifier as a DTO.
     /// </summary>
-    MovieDetailsDto? GetMovieById(int id);
+    MovieDto? GetMovieById(int id);
 
     /// <summary>
     /// Decrements quantity and marks the movie unavailable when stock reaches zero.
@@ -51,14 +51,14 @@ public interface IMovieService
     void RentMovie(int movieId, int? userId);
 
     /// <summary>
-    /// Gets a page of available movies as list DTOs.
+    /// Gets a page of available movies as DTOs.
     /// </summary>
-    List<MovieListDto> GetPagedAvailableMovies(int pageNumber, int pageSize);
+    List<MovieDto> GetPagedAvailableMovies(int pageNumber, int pageSize);
 
     /// <summary>
-    /// Gets a page of filtered movies as list DTOs.
+    /// Gets a page of filtered movies as DTOs.
     /// </summary>
-    List<MovieListDto> GetPagedFilteredMovies(
+    List<MovieDto> GetPagedFilteredMovies(
         string? title, Genre? genre, string? castName, int pageNumber, int pageSize);
 
     /// <summary>
@@ -72,7 +72,7 @@ public interface IMovieService
     List<CastDto> GetCastForMovie(int movieId);
 
     /// <summary>
-    /// Filters available movies and returns list DTOs.
+    /// Filters available movies and returns DTOs.
     /// </summary>
-    List<MovieListDto> FilterMovies(string? title, Genre? genre, string? castName);
+    List<MovieDto> FilterMovies(string? title, Genre? genre, string? castName);
 }

@@ -55,15 +55,7 @@ public class UserService : IUserService
     /// </summary>
     public void Update(UserDto dto)
     {
-        var existing = _userRepository.GetById(dto.Id);
         var user = UserMapper.MapToEntity(dto);
-
-        if (existing is not null)
-        {
-            user.SubscriptionExpiresAt = existing.SubscriptionExpiresAt;
-            user.RemainingFreeRentals = existing.RemainingFreeRentals;
-        }
-
         _userRepository.Update(user);
     }
 

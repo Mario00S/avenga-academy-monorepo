@@ -7,77 +7,54 @@ namespace VideoRentalStore.Mapper;
 
 public static class MovieMapper
 {
-    public static MovieDetailsDto MapToDetailsDto(Movie movie)
+    public static MovieDto MapToDto(Movie movie)
     {
-        return new MovieDetailsDto
+        return new MovieDto
         {
             Id = movie.Id,
             Title = movie.Title,
-            Genre = movie.Genre.ToString(),
-            Language = movie.Language.ToString(),
+            Genre = movie.Genre,
+            Language = movie.Language,
+            IsAvailable = movie.IsAvailable,
             ReleaseDate = movie.ReleaseDate,
             Length = movie.Length,
             AgeRestriction = movie.AgeRestriction,
-            CastMembers = movie.CastMembers?.Select(c => c.Name).ToList() ?? new List<string>()
+            Quantity = movie.Quantity,
+            CastMembers = movie.CastMembers?
+                .Select(MapCastToDto)
+                .ToList() ?? new List<CastDto>()
         };
     }
 
-    public static MovieListDto MapToListDto(Movie movie)
+    public static List<MovieDto> MapToDto(IEnumerable<Movie> movies)
     {
-        return new MovieListDto
-        {
-            Id = movie.Id,
-            Title = movie.Title,
-            Genre = movie.Genre.ToString(),
-            Language = movie.Language.ToString(),
-            IsAvailable = movie.IsAvailable
-        };
+        return movies?.Select(MapToDto).ToList() ?? new List<MovieDto>();
     }
 
-    public static List<MovieDetailsDto> MapToDetailsDto(IEnumerable<Movie> movies)
-    {
-        return movies?.Select(MapToDetailsDto).ToList() ?? new List<MovieDetailsDto>();
-    }
+    public static MovieDto MapToDetailsDto(Movie movie) => MapToDto(movie);
 
-    public static List<MovieListDto> MapToListDto(IEnumerable<Movie> movies)
-    {
-        return movies?.Select(MapToListDto).ToList() ?? new List<MovieListDto>();
-    }
+    public static MovieDto MapToListDto(Movie movie) => MapToDto(movie);
 
-    public static Movie MapToEntity(MovieDetailsDto dto)
+    public static List<MovieDto> MapToDetailsDto(IEnumerable<Movie> movies) => MapToDto(movies);
+
+    public static List<MovieDto> MapToListDto(IEnumerable<Movie> movies) => MapToDto(movies);
+
+    public static Movie MapToEntity(MovieDto dto)
     {
         return new Movie
         {
             Id = dto.Id,
             Title = dto.Title,
-            Genre = string.IsNullOrWhiteSpace(dto.Genre)
-                ? default
-                : Enum.Parse<Genre>(dto.Genre),
-            Language = string.IsNullOrWhiteSpace(dto.Language)
-                ? default
-                : Enum.Parse<Language>(dto.Language),
+            Genre = dto.Genre,
+            Language = dto.Language,
+            IsAvailable = dto.IsAvailable,
             ReleaseDate = dto.ReleaseDate,
             Length = dto.Length,
             AgeRestriction = dto.AgeRestriction,
+            Quantity = dto.Quantity,
             CastMembers = dto.CastMembers?
-                .Select(name => new Cast { Name = name })
+                .Select(MapCastToEntity)
                 .ToList() ?? new List<Cast>()
-        };
-    }
-
-    public static Movie MapToEntity(MovieListDto dto)
-    {
-        return new Movie
-        {
-            Id = dto.Id,
-            Title = dto.Title,
-            Genre = string.IsNullOrWhiteSpace(dto.Genre)
-                ? default
-                : Enum.Parse<Genre>(dto.Genre),
-            Language = string.IsNullOrWhiteSpace(dto.Language)
-                ? default
-                : Enum.Parse<Language>(dto.Language),
-            IsAvailable = dto.IsAvailable
         };
     }
 
@@ -107,6 +84,28 @@ public static class MovieMapper
             TitleFilter = title,
             GenreFilter = genre,
             CastFilter = castName
+        };
+    }
+
+    private static CastDto MapCastToDto(Cast cast)
+    {
+        return new CastDto
+        {
+            Id = cast.Id,
+            MovieId = cast.MovieId,
+            Name = cast.Name,
+            Role = cast.Role
+        };
+    }
+
+    private static Cast MapCastToEntity(CastDto dto)
+    {
+        return new Cast
+        {
+            Id = dto.Id,
+            MovieId = dto.MovieId,
+            Name = dto.Name,
+            Role = dto.Role
         };
     }
 }

@@ -21,7 +21,7 @@ public class MovieService : IMovieService
     /// <summary>
     /// Gets movie details by identifier.
     /// </summary>
-    public MovieDetailsDto? GetById(int id)
+    public MovieDto? GetById(int id)
     {
         var movie = _repository.GetById(id);
         if (movie is null)
@@ -29,31 +29,31 @@ public class MovieService : IMovieService
             return null;
         }
 
-        return MovieMapper.MapToDetailsDto(movie);
+        return MovieMapper.MapToDto(movie);
     }
 
     /// <summary>
-    /// Gets all movies as list DTOs.
+    /// Gets all movies as DTOs.
     /// </summary>
-    public List<MovieListDto> GetAll()
+    public List<MovieDto> GetAll()
     {
         var movies = _repository.GetAll();
-        return MovieMapper.MapToListDto(movies);
+        return MovieMapper.MapToDto(movies);
     }
 
     /// <summary>
-    /// Creates a movie from a details DTO.
+    /// Creates a movie from a DTO.
     /// </summary>
-    public void Create(MovieDetailsDto dto)
+    public void Create(MovieDto dto)
     {
         var movie = MovieMapper.MapToEntity(dto);
         _repository.Add(movie);
     }
 
     /// <summary>
-    /// Updates a movie from a details DTO.
+    /// Updates a movie from a DTO.
     /// </summary>
-    public void Update(MovieDetailsDto dto)
+    public void Update(MovieDto dto)
     {
         var movie = MovieMapper.MapToEntity(dto);
         _repository.Update(movie);
@@ -70,25 +70,25 @@ public class MovieService : IMovieService
     /// <summary>
     /// Gets all movies as list DTOs.
     /// </summary>
-    public List<MovieListDto> GetAllMovies()
+    public List<MovieDto> GetAllMovies()
     {
         return GetAll();
     }
 
     /// <summary>
-    /// Gets available movies as list DTOs.
+    /// Gets available movies as DTOs.
     /// </summary>
-    public List<MovieListDto> GetAvailableMovies()
+    public List<MovieDto> GetAvailableMovies()
     {
         // Business rule: only return movies marked as available
         var movies = _repository.GetAll().Where(m => m.IsAvailable);
-        return MovieMapper.MapToListDto(movies);
+        return MovieMapper.MapToDto(movies);
     }
 
     /// <summary>
-    /// Gets movie details by identifier.
+    /// Gets a movie by identifier as a DTO.
     /// </summary>
-    public MovieDetailsDto? GetMovieById(int id)
+    public MovieDto? GetMovieById(int id)
     {
         return GetById(id);
     }
@@ -144,37 +144,39 @@ public class MovieService : IMovieService
         return _castRepository.GetByMovieId(movieId)
             .Select(c => new CastDto
             {
+                Id = c.Id,
+                MovieId = c.MovieId,
                 Name = c.Name,
-                Role = c.Role.ToString()
+                Role = c.Role
             })
             .ToList();
     }
 
     /// <summary>
-    /// Gets a page of available movies as list DTOs.
+    /// Gets a page of available movies as DTOs.
     /// </summary>
-    public List<MovieListDto> GetPagedAvailableMovies(int pageNumber, int pageSize)
+    public List<MovieDto> GetPagedAvailableMovies(int pageNumber, int pageSize)
     {
         var movies = _repository.GetAvailableMovies()
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize);
 
-        return MovieMapper.MapToListDto(movies);
+        return MovieMapper.MapToDto(movies);
     }
 
     /// <summary>
-    /// Filters available movies and returns list DTOs.
+    /// Filters available movies and returns DTOs.
     /// </summary>
-    public List<MovieListDto> FilterMovies(string? title, Genre? genre, string? castName)
+    public List<MovieDto> FilterMovies(string? title, Genre? genre, string? castName)
     {
         var result = FilterDomainMovies(title, genre, castName);
-        return MovieMapper.MapToListDto(result);
+        return MovieMapper.MapToDto(result);
     }
 
     /// <summary>
-    /// Gets a page of filtered movies as list DTOs.
+    /// Gets a page of filtered movies as DTOs.
     /// </summary>
-    public List<MovieListDto> GetPagedFilteredMovies(
+    public List<MovieDto> GetPagedFilteredMovies(
         string? title, Genre? genre, string? castName, int pageNumber, int pageSize)
     {
         var filteredMovies = FilterDomainMovies(title, genre, castName);
@@ -184,7 +186,7 @@ public class MovieService : IMovieService
             .Take(pageSize)
             .ToList();
 
-        return MovieMapper.MapToListDto(paged);
+        return MovieMapper.MapToDto(paged);
     }
 
     private List<Movie> FilterDomainMovies(string? title, Genre? genre, string? castName)

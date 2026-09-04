@@ -21,8 +21,10 @@ public class CastService : ICastService
         return _repository.GetByMovieId(movieId)
             .Select(c => new CastDto
             {
+                Id = c.Id,
+                MovieId = c.MovieId,
                 Name = c.Name,
-                Role = c.Role.ToString()
+                Role = c.Role
             })
             .ToList();
     }

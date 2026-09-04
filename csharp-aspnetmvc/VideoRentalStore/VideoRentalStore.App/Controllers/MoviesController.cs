@@ -2,8 +2,6 @@
 using VideoRentalStore.Domain.Entities;
 using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Mapper;
-using VideoRentalStore.Models.Dtos;
-using VideoRentalStore.Models.ViewModels;
 using VideoRentalStore.Services.Interfaces;
 
 namespace VideoRentalStore.App.Controllers
@@ -82,9 +80,7 @@ namespace VideoRentalStore.App.Controllers
             // Check if this user already rented the movie
             var existingRental = _rentalService
                 .GetRentalsByUserId(userId)
-                .FirstOrDefault(r =>
-                    string.Equals(r.MovieTitle, movieDto.Title, StringComparison.OrdinalIgnoreCase)
-                    && r.ReturnedOn == null);
+                .FirstOrDefault(r => r.MovieId == id && r.ReturnedOn == null);
 
             if (existingRental != null)
             {
@@ -96,7 +92,7 @@ namespace VideoRentalStore.App.Controllers
                 ViewBag.CannotRent = true;
             }
 
-            var movie = MapDetailsDtoToMovie(movieDto);
+            var movie = MovieMapper.MapToEntity(movieDto);
             return View(movie);
         }
 
@@ -163,35 +159,18 @@ namespace VideoRentalStore.App.Controllers
                 return NotFound();
             }
 
-            var movie = MapDetailsDtoToMovie(movieDto);
+            var movie = MovieMapper.MapToEntity(movieDto);
             var castDtos = _movieService.GetCastForMovie(id);
-            var cast = MapCastDtosToEntities(castDtos);
+            var cast = castDtos.Select(c => new Cast
+            {
+                Id = c.Id,
+                MovieId = c.MovieId,
+                Name = c.Name,
+                Role = c.Role
+            });
             var viewModel = MovieMapper.MapMovieToDetails(movie, cast);
 
             return View(viewModel);
-        }
-
-        private Movie MapDetailsDtoToMovie(MovieDetailsDto movieDto)
-        {
-            var movie = MovieMapper.MapToEntity(movieDto);
-            var listDto = _movieService.GetAllMovies().FirstOrDefault(m => m.Id == movieDto.Id);
-            if (listDto != null)
-            {
-                movie.IsAvailable = listDto.IsAvailable;
-            }
-
-            return movie;
-        }
-
-        private static IEnumerable<Cast> MapCastDtosToEntities(IEnumerable<CastDto> castDtos)
-        {
-            return castDtos.Select(c => new Cast
-            {
-                Name = c.Name,
-                Role = string.IsNullOrWhiteSpace(c.Role)
-                    ? default
-                    : Enum.Parse<CastRole>(c.Role)
-            });
         }
     }
 }

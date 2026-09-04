@@ -1,5 +1,4 @@
 ﻿using VideoRentalStore.Domain.Entities;
-using VideoRentalStore.Domain.Enums;
 using VideoRentalStore.Models.Dtos;
 using VideoRentalStore.Models.ViewModels;
 
@@ -16,7 +15,9 @@ public static class UserMapper
             Age = user.Age,
             CardNumber = user.CardNumber,
             CreatedOn = user.CreatedOn,
-            SubscriptionType = user.SubscriptionType.ToString(),
+            SubscriptionExpiresAt = user.SubscriptionExpiresAt,
+            RemainingFreeRentals = user.RemainingFreeRentals,
+            SubscriptionType = user.SubscriptionType,
             IsSubscriptionExpired = user.IsSubscriptionExpired
         };
     }
@@ -35,9 +36,9 @@ public static class UserMapper
             Age = dto.Age,
             CardNumber = dto.CardNumber,
             CreatedOn = dto.CreatedOn,
-            SubscriptionType = string.IsNullOrWhiteSpace(dto.SubscriptionType)
-                ? default
-                : Enum.Parse<SubscriptionType>(dto.SubscriptionType)
+            SubscriptionExpiresAt = dto.SubscriptionExpiresAt,
+            RemainingFreeRentals = dto.RemainingFreeRentals,
+            SubscriptionType = dto.SubscriptionType
         };
     }
 
