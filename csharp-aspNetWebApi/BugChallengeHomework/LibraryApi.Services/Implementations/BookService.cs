@@ -32,7 +32,7 @@ public class BookService : IBookService
 
         if (minYear.HasValue)
         {
-            booksDb = booksDb.Where(book => book.Year > minYear.Value).ToList();
+            booksDb = booksDb.Where(book => book.Year >= minYear.Value).ToList();
         }
 
         // 3) Map to DTOs
@@ -85,7 +85,7 @@ public class BookService : IBookService
         newBook.Author = author;
 
         // 3) Save
-        _bookRepository.AddAsync(newBook);
+        await _bookRepository.AddAsync(newBook);
 
         return newBook.ToBookDto();
     }

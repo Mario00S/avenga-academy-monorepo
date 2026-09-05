@@ -5,4 +5,5 @@
   <Project Path="LibraryApi.Mappers/LibraryApi.Mappers.csproj" />
   <Project Path="LibraryApi.Services/LibraryApi.Services.csproj" />
   <Project Path="LibraryApi/LibraryApi.csproj" />
+  <Project Path="LibraryApi.PlaywrightTests/LibraryApi.PlaywrightTests.csproj" />
 </Solution>

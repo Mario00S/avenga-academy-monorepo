@@ -26,14 +26,14 @@ public class BookRepository : IBookRepository
     {
         return await _context.Books
             .Include(book => book.Author)
-            .AsNoTracking()
+            //.AsNoTracking() // probably this because we need to write if we are updating
             .FirstOrDefaultAsync(book => book.Id == id);
     }
 
     public async Task<List<Book>> GetByAuthorIdAsync(int authorId)
     {
         return await _context.Books
-            .Where(book => book.AuthorId == authorId)
+            .Where(book => book.AuthorId == authorId).Include(book => book.Author)
             .AsNoTracking()
             .ToListAsync();
     }

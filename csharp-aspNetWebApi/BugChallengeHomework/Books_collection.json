@@ -1,0 +1,1167 @@
+{
+  "info": {
+    "name": "LibraryApi - Books",
+    "description": "Postman tests for BooksController.\n\nRun the whole collection from top to bottom. Create Book - Valid stores createdBookId, which Update and Delete then use so seed data (book 1) is not deleted.\n\nbaseUrl default: https://localhost:7205 (http profile: http://localhost:5224).\n\nExpected seed data: 9 books, authors 1-4 (Orwell, Asimov, Le Guin, Harari).\nGenre is serialized as a number: Fiction=1, Fantasy=2, Science=3, History=4, Biography=5.\nminYear filter is exclusive (Year > minYear).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://localhost:7205" },
+    { "key": "createdBookId", "value": "" },
+    { "key": "existingBookId", "value": "1" },
+    { "key": "existingAuthorId", "value": "1" },
+    { "key": "tooLongTitle", "value": "" },
+    { "key": "tooLongIsbn", "value": "" }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set(\"tooLongTitle\", \"A\".repeat(201));",
+          "pm.collectionVariables.set(\"tooLongIsbn\", \"1\".repeat(21));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "GET Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Content-Type is JSON\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Body is an array of books with the expected shape\", function () {",
+                  "    const books = pm.response.json();",
+                  "    pm.expect(books).to.be.an(\"array\");",
+                  "    pm.expect(books.length).to.be.at.least(9);",
+                  "    books.forEach(function (book) {",
+                  "        pm.expect(book).to.include.keys(\"id\", \"title\", \"isbn\", \"year\", \"pageCount\", \"genre\", \"authorFullName\");",
+                  "        pm.expect(book.id).to.be.a(\"number\");",
+                  "        pm.expect(book.title).to.be.a(\"string\").and.to.have.lengthOf.at.least(1);",
+                  "        pm.expect(book.authorFullName).to.be.a(\"string\").and.to.not.equal(\"Unknown\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Seeded book 1984 is present\", function () {",
+                  "    const books = pm.response.json();",
+                  "    const nineteenEightyFour = books.find(book => book.id === 1);",
+                  "    pm.expect(nineteenEightyFour).to.not.be.undefined;",
+                  "    pm.expect(nineteenEightyFour.title).to.eql(\"1984\");",
+                  "    pm.expect(nineteenEightyFour.authorFullName).to.eql(\"George Orwell\");",
+                  "    pm.expect(nineteenEightyFour.genre).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Books - Filter by Genre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books?genre=Fantasy",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"],
+              "query": [
+                { "key": "genre", "value": "Fantasy" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const FANTASY = 2;",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Every returned book is Fantasy\", function () {",
+                  "    const books = pm.response.json();",
+                  "    pm.expect(books).to.be.an(\"array\").that.is.not.empty;",
+                  "    books.forEach(function (book) {",
+                  "        pm.expect(book.genre).to.eql(FANTASY);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Seeded Le Guin fantasy titles are included\", function () {",
+                  "    const titles = pm.response.json().map(book => book.title);",
+                  "    pm.expect(titles).to.include(\"A Wizard of Earthsea\");",
+                  "    pm.expect(titles).to.include(\"The Left Hand of Darkness\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Books - Filter by MinYear (exclusive)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books?minYear=1950",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"],
+              "query": [
+                { "key": "minYear", "value": "1950" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Filter is exclusive: only books with year > 1950\", function () {",
+                  "    const books = pm.response.json();",
+                  "    pm.expect(books).to.be.an(\"array\").that.is.not.empty;",
+                  "    books.forEach(function (book) {",
+                  "        pm.expect(book.year).to.be.above(1950);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"I, Robot (1950) is excluded and Foundation (1951) is included\", function () {",
+                  "    const titles = pm.response.json().map(book => book.title);",
+                  "    pm.expect(titles).to.not.include(\"I, Robot\");",
+                  "    pm.expect(titles).to.include(\"Foundation\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Books (Filtered)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books?genre=Fantasy&minYear=1950",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"],
+              "query": [
+                { "key": "genre", "value": "Fantasy" },
+                { "key": "minYear", "value": "1950" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const FANTASY = 2;",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Results match both genre and exclusive minYear filters\", function () {",
+                  "    const books = pm.response.json();",
+                  "    pm.expect(books).to.be.an(\"array\").that.is.not.empty;",
+                  "    books.forEach(function (book) {",
+                  "        pm.expect(book.genre).to.eql(FANTASY);",
+                  "        pm.expect(book.year).to.be.above(1950);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Books - Invalid Genre Query",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books?genre=NotAGenre",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"],
+              "query": [
+                { "key": "genre", "value": "NotAGenre" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400 from model binding\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Validation problem mentions genre\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(JSON.stringify(body).toLowerCase()).to.include(\"genre\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Book By Id - Valid",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{existingBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "{{existingBookId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Returns the seeded 1984 book\", function () {",
+                  "    const book = pm.response.json();",
+                  "    pm.expect(book.id).to.eql(1);",
+                  "    pm.expect(book.title).to.eql(\"1984\");",
+                  "    pm.expect(book.isbn).to.eql(\"9780451524935\");",
+                  "    pm.expect(book.year).to.eql(1949);",
+                  "    pm.expect(book.pageCount).to.eql(328);",
+                  "    pm.expect(book.genre).to.eql(1);",
+                  "    pm.expect(book.authorFullName).to.eql(\"George Orwell\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Book By Id - Not Found",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "9999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Problem details describe a missing book\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.title).to.eql(\"Book not found\");",
+                  "    pm.expect(body.detail).to.include(\"9999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Book By Id - Zero",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "0"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Problem details describe a missing book\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.title).to.eql(\"Book not found\");",
+                  "    pm.expect(body.detail).to.include(\"0\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Books By Author - Valid",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/by-author/{{existingAuthorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "by-author", "{{existingAuthorId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Returns Orwell's seeded books\", function () {",
+                  "    const books = pm.response.json();",
+                  "    pm.expect(books).to.be.an(\"array\");",
+                  "    pm.expect(books.length).to.be.at.least(3);",
+                  "    const titles = books.map(book => book.title);",
+                  "    pm.expect(titles).to.include.members([\"1984\", \"Animal Farm\", \"Homage to Catalonia\"]);",
+                  "    books.forEach(function (book) {",
+                  "        pm.expect(book.authorFullName).to.eql(\"George Orwell\");",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Books By Author - Not Found",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/by-author/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "by-author", "9999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Problem details describe a missing author\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.title).to.eql(\"Author not found\");",
+                  "    pm.expect(body.detail).to.include(\"9999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POST Books",
+      "item": [
+        {
+          "name": "Create Book - Valid",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Hobbit\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": 310,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Created book is returned and id is stored\", function () {",
+                  "    const book = pm.response.json();",
+                  "    pm.expect(book.id).to.be.a(\"number\").and.to.be.above(0);",
+                  "    pm.expect(book.title).to.eql(\"The Hobbit\");",
+                  "    pm.expect(book.isbn).to.eql(\"978-0547928227\");",
+                  "    pm.expect(book.year).to.eql(1937);",
+                  "    pm.expect(book.pageCount).to.eql(310);",
+                  "    pm.expect(book.genre).to.eql(2);",
+                  "    pm.expect(book.authorFullName).to.eql(\"George Orwell\");",
+                  "    pm.collectionVariables.set(\"createdBookId\", String(book.id));",
+                  "});",
+                  "",
+                  "pm.test(\"Location header points at the new book\", function () {",
+                  "    const location = pm.response.headers.get(\"Location\") || \"\";",
+                  "    const id = pm.collectionVariables.get(\"createdBookId\");",
+                  "    pm.expect(location.toLowerCase()).to.include(`/api/books/${id}`);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Missing Title",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": 310,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Invalid book data: title is required\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"Title is a required field\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Whitespace Title",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"   \",\n  \"isbn\": \"9780547928227\",\n  \"year\": 1937,\n  \"pageCount\": 310,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Whitespace-only title is treated as missing\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"Title is a required field\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Title Too Long",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{tooLongTitle}}\",\n  \"isbn\": \"9780547928228\",\n  \"year\": 1937,\n  \"pageCount\": 310,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Title longer than 200 characters is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"200 characters\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Missing ISBN",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"No Isbn Book\",\n  \"isbn\": \"\",\n  \"year\": 2000,\n  \"pageCount\": 100,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Isbn is required\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"Isbn is a required field\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - ISBN Too Long",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Long Isbn Book\",\n  \"isbn\": \"{{tooLongIsbn}}\",\n  \"year\": 2000,\n  \"pageCount\": 100,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Isbn longer than 20 characters is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"Isbn cannot contain more than 20 characters\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Invalid Year",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Future Book\",\n  \"isbn\": \"1234567890\",\n  \"year\": 3000,\n  \"pageCount\": 100,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Year after the current UTC year is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"3000\");",
+                  "    pm.expect(body.detail).to.include(\"not a valid publication year\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Year Too Old",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Ancient Book\",\n  \"isbn\": \"1234567891\",\n  \"year\": 1449,\n  \"pageCount\": 100,\n  \"genre\": \"History\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Year before 1450 is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"1449\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - PageCount Zero",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Empty Book\",\n  \"isbn\": \"1234567892\",\n  \"year\": 2000,\n  \"pageCount\": 0,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"PageCount must be greater than zero\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"PageCount must be greater than zero\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Invalid Genre",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Weird Genre\",\n  \"isbn\": \"1234567890\",\n  \"year\": 2000,\n  \"pageCount\": 200,\n  \"genre\": 42,\n  \"authorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Undefined enum value 42 is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"not a valid value\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Book - Unknown Author",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Orphan Book\",\n  \"isbn\": \"1234567893\",\n  \"year\": 2000,\n  \"pageCount\": 120,\n  \"genre\": \"Fantasy\",\n  \"authorId\": 9999\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Unknown author is 400 Invalid author, not 404\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "    pm.expect(body.title).to.eql(\"Invalid author\");",
+                  "    pm.expect(body.detail).to.include(\"9999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PUT Books",
+      "item": [
+        {
+          "name": "Update Book - Valid",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const id = pm.collectionVariables.get(\"createdBookId\");",
+                  "if (!id) {",
+                  "    throw new Error(\"createdBookId is empty. Run Create Book - Valid first.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{createdBookId}},\n  \"title\": \"The Hobbit (Updated)\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": 320,\n  \"genre\": \"Fantasy\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          }
+        },
+        {
+          "name": "Get Book After Update",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "{{createdBookId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Persisted values match the update payload\", function () {",
+                  "    const book = pm.response.json();",
+                  "    pm.expect(String(book.id)).to.eql(pm.collectionVariables.get(\"createdBookId\"));",
+                  "    pm.expect(book.title).to.eql(\"The Hobbit (Updated)\");",
+                  "    pm.expect(book.pageCount).to.eql(320);",
+                  "    pm.expect(book.genre).to.eql(2);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book - Not Found",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 9999,\n  \"title\": \"Nonexistent\",\n  \"isbn\": \"1234567890\",\n  \"year\": 2000,\n  \"pageCount\": 100,\n  \"genre\": \"Fantasy\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Problem details describe a missing book\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.title).to.eql(\"Book not found\");",
+                  "    pm.expect(body.detail).to.include(\"9999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book - Missing Title",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{createdBookId}},\n  \"title\": \"\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": 320,\n  \"genre\": \"Fantasy\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Invalid book data: title is required\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"Title is a required field\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book - Invalid Year",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{createdBookId}},\n  \"title\": \"The Hobbit (Updated)\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 3000,\n  \"pageCount\": 320,\n  \"genre\": \"Fantasy\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Invalid year is rejected on update\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"not a valid publication year\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book - Invalid PageCount",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{createdBookId}},\n  \"title\": \"The Hobbit (Updated)\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": -5,\n  \"genre\": \"Fantasy\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Negative PageCount is rejected\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"PageCount must be greater than zero\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Book - Invalid Genre",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{createdBookId}},\n  \"title\": \"The Hobbit (Updated)\",\n  \"isbn\": \"978-0547928227\",\n  \"year\": 1937,\n  \"pageCount\": 320,\n  \"genre\": 42\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/books",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Undefined genre is rejected on update\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Invalid book data\");",
+                  "    pm.expect(body.detail).to.include(\"not a valid value\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DELETE Books",
+      "item": [
+        {
+          "name": "Delete Book - Valid",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const id = pm.collectionVariables.get(\"createdBookId\");",
+                  "if (!id) {",
+                  "    throw new Error(\"createdBookId is empty. Run Create Book - Valid first.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test(\"Response body is empty\", function () {",
+                  "    pm.expect(pm.response.text()).to.eql(\"\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "{{createdBookId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Book After Delete",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/{{createdBookId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "{{createdBookId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Deleted book is no longer found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(\"Book not found\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Book - Not Found",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/books/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "books", "9999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Problem details describe a missing book\", function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.status).to.eql(404);",
+                  "    pm.expect(body.title).to.eql(\"Book not found\");",
+                  "    pm.expect(body.detail).to.include(\"9999\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
