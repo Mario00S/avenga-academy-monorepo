@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NotesApp.DataAccess.Data;
 
@@ -11,17 +12,15 @@ using NotesApp.DataAccess.Data;
 namespace NotesApp.DataAccess.Migrations
 {
     [DbContext(typeof(NotesAppDbContext))]
-    partial class NotesAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918143644_MarioTest")]
+    partial class MarioTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-<<<<<<< HEAD
-                .HasAnnotation("ProductVersion", "8.0.30")
-=======
                 .HasAnnotation("ProductVersion", "10.0.11")
->>>>>>> 54423b7 (adding PizzApp & other small changes on the monorepo)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -160,11 +159,7 @@ namespace NotesApp.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-<<<<<<< HEAD
-                    b.ToTable("Tag");
-=======
                     b.ToTable("Tag", (string)null);
->>>>>>> 54423b7 (adding PizzApp & other small changes on the monorepo)
 
                     b.HasData(
                         new
@@ -248,11 +243,7 @@ namespace NotesApp.DataAccess.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-<<<<<<< HEAD
-                    b.ToTable("User");
-=======
                     b.ToTable("User", (string)null);
->>>>>>> 54423b7 (adding PizzApp & other small changes on the monorepo)
 
                     b.HasData(
                         new

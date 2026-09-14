@@ -1,0 +1,109 @@
+## Build / tooling
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+artifacts/
+publish/
+*.dll
+*.exe
+*.pdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+
+## Visual Studio / Rider
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+.idea/
+*.DotSettings.user
+
+## VS Code (keep shared settings; ignore local overrides)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+## .NET / NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/
+.nugetcache
+
+## Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+TestResults/
+
+## Entity Framework
+# Keep Migrations/ in source control; ignore local scratch files if any
+
+## Environment & secrets (do not commit)
+.env
+.env.*
+!.env.example
+*.env
+.envrc
+secrets.json
+**/secrets.json
+appsettings.Local.json
+appsettings.*.Local.json
+appsettings.Development.Local.json
+appsettings.Production.json
+connectionstrings.json
+**/usersecrets.json
+
+## Certificates & keys
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+id_rsa
+id_rsa.*
+*.publishsettings
+
+## OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+## Logs & temp
+*.log
+*.tmp
+*.temp
+*.swp
+*~
+
+## JetBrains / ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Docker local overrides (optional)
+docker-compose.override.yml
+docker-compose.*.local.yml

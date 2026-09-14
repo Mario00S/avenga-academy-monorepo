@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="PizzaApp.Api/PizzaApp.Api.csproj" Id="f23dde35-1f41-4266-9422-a53a5304f178" />
+  <Project Path="PizzaApp.DataAccess/PizzaApp.DataAccess.csproj" Id="c803efb5-1e3b-43c0-a8fb-86f9bb8ebdf2" />
+  <Project Path="PizzaApp.Domain/PizzaApp.Domain.csproj" Id="4c183281-4605-422e-ba42-9483b0f38e97" />
+  <Project Path="PizzaApp.Dtos/PizzaApp.Dtos.csproj" Id="c67bc2ab-aa5f-4311-9e37-b67d26156c70" />
+  <Project Path="PizzaApp.Mappers/PizzaApp.Mappers.csproj" Id="5a907c1c-bb45-4203-a498-d0bdb095d88b" />
+  <Project Path="PizzaApp.Services/PizzaApp.Services.csproj" Id="2fa71ffd-cef4-43f4-90f9-3e62aaec6e83" />
+  <Project Path="PizzaApp.Shared/PizzaApp.Shared.csproj" Id="db0282ab-19e9-4216-b621-84e729bdf421" />
+</Solution>
