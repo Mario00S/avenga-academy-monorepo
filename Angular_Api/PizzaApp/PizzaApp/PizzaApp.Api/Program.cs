@@ -1,22 +1,22 @@
 using PizzaApp.Api.Extensions;
 using PizzaApp.DataAccess;
+using PizzaApp.Mappers;
 using PizzaApp.Services;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddApi(builder.Configuration);
 builder.Services.AddDataAccess(builder.Configuration)
-    .AddServices();
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+    .AddServices()
+    .AddMappers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// if we want to use our own exception handler, we can configure it here
+//with the _=> {} instead of the default exception handler
+app.UseExceptionHandler(_ => { });
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi().AllowAnonymous();

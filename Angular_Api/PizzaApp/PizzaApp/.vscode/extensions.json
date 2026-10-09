@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "anysphere.csharp",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-vscode.vs-keybindings",
+    "fernandoescolar.vscode-solution-explorer",
+    "csharpier.csharpier-vscode"
+  ]
+}

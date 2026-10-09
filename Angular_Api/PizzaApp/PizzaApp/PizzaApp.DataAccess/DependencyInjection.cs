@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PizzaApp.DataAccess.Context;
+using PizzaApp.DataAccess.Repositories.Abstractions;
+using PizzaApp.DataAccess.Repositories.Implementations;
 using PizzaApp.Domain.Entities;
 
 namespace PizzaApp.DataAccess;
@@ -24,7 +26,8 @@ public static class DependencyInjection
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<PizzaAppDbContext>();
 
-        
+        //Repositories
+        services.AddScoped<IPizzaRepository, PizzaRepository>();
 
         return services;
     }

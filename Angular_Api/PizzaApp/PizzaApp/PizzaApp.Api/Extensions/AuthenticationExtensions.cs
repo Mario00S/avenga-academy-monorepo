@@ -42,6 +42,7 @@ public static class AuthenticationExtensions
                 };
             });
 
+        //this makes us safe if we forget to authorize an endpoint
         services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
