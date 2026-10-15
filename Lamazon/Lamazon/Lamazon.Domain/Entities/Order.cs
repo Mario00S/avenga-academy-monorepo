@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Entities;
+namespace Lamazon.Domain.Entities;
 
 public class Order : BaseEntity
 {
@@ -10,15 +10,13 @@ public class Order : BaseEntity
     public string? CountryCode { get; set; }
     public string? CountryFlagUrl { get; set; }
 
-    //Relationships
     public int UserId { get; set; }
     public User User { get; set; }
 
     public int OrderStatusId { get; set; }
     public OrderStatus OrderStatus { get; set; }
 
-    public int InvoiceId { get; set; }
-    public Invoice Invoice { get; set; }
+    public Invoice? Invoice { get; set; }
 
     public ICollection<OrderLineItem> OrderLineItems { get; set; } = [];
 }

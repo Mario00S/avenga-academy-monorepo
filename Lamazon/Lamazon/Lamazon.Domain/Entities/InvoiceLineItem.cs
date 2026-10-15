@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Entities;
+namespace Lamazon.Domain.Entities;
 
 public class InvoiceLineItem : BaseEntity
 {
@@ -8,13 +8,13 @@ public class InvoiceLineItem : BaseEntity
     public int DiscountPercentage { get; set; }
     public decimal TotalPrice { get; set; }
 
-    //Relationships
+    // Relations
     public int InvoiceId { get; set; }
     public Invoice Invoice { get; set; }
 
     public int OrderLineItemId { get; set; }
     public OrderLineItem OrderLineItem { get; set; }
 
-    public Product Product { get; set; }
     public int ProductId { get; set; }
+    public Product Product { get; set; }
 }

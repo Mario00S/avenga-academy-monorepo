@@ -1,25 +1,41 @@
-using Lamazon.Web.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Lamazon.Services.Abstractions;
+using Lamazon.ViewModels.Models;
+using Lamazon.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Lamazon.Web.Controllers
+namespace Lamazon.Web.Controllers;
+
+public class HomeController : BaseController
 {
-    public class HomeController : Controller
+    private readonly IProductsService _productsService;
+
+    public HomeController(IProductsService productsService)
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        _productsService = productsService;
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    {
+        List<ProductViewModel> featuredProducts = await _productsService.GetFeaturedAsync(cancellationToken);
+        MarkProductsInCart(featuredProducts);
+        return View(featuredProducts);
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+    [Authorize]
+    public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error(int? statusCode)
+    {
+        return View(new ErrorViewModel
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            StatusCode = statusCode ?? StatusCodes.Status500InternalServerError,
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }

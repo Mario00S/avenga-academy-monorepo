@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Entities;
+namespace Lamazon.Domain.Entities;
 
 public abstract class BaseEntity
 {

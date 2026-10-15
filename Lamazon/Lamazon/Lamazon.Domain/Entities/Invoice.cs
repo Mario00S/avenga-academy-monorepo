@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Entities;
+namespace Lamazon.Domain.Entities;
 
 public class Invoice : BaseEntity
 {
@@ -6,7 +6,7 @@ public class Invoice : BaseEntity
     public DateTime InvoiceDate { get; set; }
     public decimal TotalAmount { get; set; }
 
-    //Realationships
+    // Relations
     public int UserId { get; set; }
     public User User { get; set; }
 
@@ -15,5 +15,6 @@ public class Invoice : BaseEntity
 
     public int InvoiceStatusId { get; set; }
     public InvoiceStatus InvoiceStatus { get; set; }
+
     public ICollection<InvoiceLineItem> InvoiceLineItems { get; set; } = [];
 }

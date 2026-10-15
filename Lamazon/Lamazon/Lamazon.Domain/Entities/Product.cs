@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Entities;
+namespace Lamazon.Domain.Entities;
 
 public class Product : BaseEntity
 {
@@ -10,14 +10,12 @@ public class Product : BaseEntity
     public int DiscountPercentage { get; set; }
     public decimal DiscountedPrice => Math.Round((1 - DiscountPercentage / 100m) * Price, 2);
 
-    //Relationships
     public int ProductCategoryId { get; set; }
     public ProductCategory ProductCategory { get; set; }
 
     public int ProductStatusId { get; set; }
     public ProductStatus ProductStatus { get; set; }
 
-    // Navigation properties
-    public ICollection<OrderLineItem> OrderLineItems { get; set; } = [];
     public ICollection<InvoiceLineItem> InvoiceLineItems { get; set; } = [];
+    public ICollection<OrderLineItem> OrderLineItems { get; set; } = [];
 }

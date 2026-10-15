@@ -1,4 +1,4 @@
-﻿namespace Lamazon.Domain.Enums;
+namespace Lamazon.Domain.Enums;
 
 public enum OrderStatusEnum
 {
