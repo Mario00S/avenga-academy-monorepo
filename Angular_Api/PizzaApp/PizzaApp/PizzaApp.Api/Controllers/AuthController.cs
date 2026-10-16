@@ -7,7 +7,7 @@ using PizzaApp.Services.Abstractions;
 namespace PizzaApp.Api.Controllers;
 
 [AllowAnonymous]
-public class AuthController : ControllerBase
+public class AuthController : ApiControllerBase
 {
     private readonly IAuthService _authService;
     public AuthController(IAuthService authService)

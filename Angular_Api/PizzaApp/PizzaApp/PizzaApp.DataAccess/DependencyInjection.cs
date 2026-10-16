@@ -28,6 +28,7 @@ public static class DependencyInjection
 
         //Repositories
         services.AddScoped<IPizzaRepository, PizzaRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         return services;
     }

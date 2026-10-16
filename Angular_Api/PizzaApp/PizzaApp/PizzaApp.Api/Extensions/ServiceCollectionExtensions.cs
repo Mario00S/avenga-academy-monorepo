@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using PizzaApp.Api.ExceptionHandling;
 using PizzaApp.Api.Security;
+using PizzaApp.Dtos.Common;
 using PizzaApp.Services.Abstractions;
 
 namespace PizzaApp.Api.Extensions;
@@ -11,8 +13,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false));
+            })
             .ConfigureApiBehaviorOptions(options =>
             {
+                options.SuppressMapClientErrors = true;
                 options.SuppressModelStateInvalidFilter = true;
                 options.InvalidModelStateResponseFactory = CreateValidationErrorResponse;
             });
@@ -36,7 +43,7 @@ public static class ServiceCollectionExtensions
             .Where(message => !string.IsNullOrWhiteSpace(message))
             .ToList();
 
-        return new BadRequestObjectResult(new
+        return new BadRequestObjectResult(new ErrorResponse
         {
             StatusCode = StatusCodes.Status400BadRequest,
             Message = "Validation failed.",

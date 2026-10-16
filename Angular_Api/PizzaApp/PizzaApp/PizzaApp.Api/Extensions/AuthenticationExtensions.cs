@@ -20,7 +20,7 @@ public static class AuthenticationExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
-        services.AddOptions<JwtBearerOptions>()
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
             .Configure<IOptions<JwtSettings>>((options, jwtSettings) =>
             {
                 var jwt = jwtSettings.Value;
