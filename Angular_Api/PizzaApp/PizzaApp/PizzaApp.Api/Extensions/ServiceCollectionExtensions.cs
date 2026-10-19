@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
 
         services.AddOpenApiDocumentation();
         services.AddJwtAuthentication(configuration);
+        services.AddFrontendCors(configuration);
         services.AddRouting(options => options.LowercaseUrls = true);
         services.AddExceptionHandler<GlobalExceptionHandler>();
 

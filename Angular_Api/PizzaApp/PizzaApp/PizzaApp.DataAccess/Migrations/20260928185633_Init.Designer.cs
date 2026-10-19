@@ -334,15 +334,15 @@ namespace PizzaApp.DataAccess.Migrations
                         {
                             Id = "00000000-0000-0000-0000-000000000001",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "guid generated",
+                            ConcurrencyStamp = "d476b4e7-13dc-42c4-a6a2-0c1c5e8897be",
                             Email = "admin@pizzaapp.local",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@PIZZAAPP.LOCAL",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJ0Z1k5F6",
+                            PasswordHash = "AQAAAAIAAYagAAAAEORMNJTSPwqrmb2GKtm5oxli8mkCddIShGuomTmTzpYUfNBuyB9YyZyhymbYQOXTMA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "guid generated",
+                            SecurityStamp = "ea93155b-08c2-4539-a6d5-e922d27173e3",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

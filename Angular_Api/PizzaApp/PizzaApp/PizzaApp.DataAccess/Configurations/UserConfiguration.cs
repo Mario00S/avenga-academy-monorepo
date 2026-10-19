@@ -19,10 +19,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             NormalizedEmail = "ADMIN@PIZZAAPP.LOCAL",
 
             // Password: Admin123!
-            PasswordHash = "AQAAAAEAACcQAAAAEJ0Z1k5F6",
+            PasswordHash = "AQAAAAIAAYagAAAAEORMNJTSPwqrmb2GKtm5oxli8mkCddIShGuomTmTzpYUfNBuyB9YyZyhymbYQOXTMA==",
 
-            SecurityStamp = "guid generated",
-            ConcurrencyStamp = "guid generated"
+            SecurityStamp = "ea93155b-08c2-4539-a6d5-e922d27173e3",
+            ConcurrencyStamp = "d476b4e7-13dc-42c4-a6a2-0c1c5e8897be"
 
         });
     }

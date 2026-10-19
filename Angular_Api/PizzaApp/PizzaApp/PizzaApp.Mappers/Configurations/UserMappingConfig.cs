@@ -10,7 +10,5 @@ public class UserMappingConfig : IRegister
     {
         config.NewConfig<User, UserDto>()
             .Ignore(ignore => ignore.Roles);
-        //this is for custom exception or 
-            //.Map(u => u.Roles, src => "")
     }
 }

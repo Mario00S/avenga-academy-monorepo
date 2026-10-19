@@ -228,7 +228,7 @@ namespace PizzaApp.DataAccess.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "00000000-0000-0000-0000-000000000001", 0, "guid generated", "admin@pizzaapp.local", false, false, null, "ADMIN@PIZZAAPP.LOCAL", "ADMIN", "AQAAAAEAACcQAAAAEJ0Z1k5F6", null, false, "guid generated", false, "admin" });
+                values: new object[] { "00000000-0000-0000-0000-000000000001", 0, "d476b4e7-13dc-42c4-a6a2-0c1c5e8897be", "admin@pizzaapp.local", false, false, null, "ADMIN@PIZZAAPP.LOCAL", "ADMIN", "AQAAAAIAAYagAAAAEORMNJTSPwqrmb2GKtm5oxli8mkCddIShGuomTmTzpYUfNBuyB9YyZyhymbYQOXTMA==", null, false, "ea93155b-08c2-4539-a6d5-e922d27173e3", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

@@ -11,22 +11,12 @@ public static class OrderStatusRules
             return currentStatus == OrderStatus.Pending && newStatus == OrderStatus.Cancelled;
         }
 
-        if (currentStatus == OrderStatus.Pending && newStatus == OrderStatus.Preparing)
+        return (currentStatus, newStatus) switch
         {
-            return true;
-        }
-
-        if (currentStatus == OrderStatus.Preparing && newStatus == OrderStatus.Delivered)
-        {
-            return true;
-        }
-
-        if ((currentStatus == OrderStatus.Pending || currentStatus == OrderStatus.Preparing)
-            && newStatus == OrderStatus.Cancelled)
-        {
-            return true;
-        }
-
-        return false;
+            (OrderStatus.Pending, OrderStatus.Preparing) => true,
+            (OrderStatus.Preparing, OrderStatus.Delivered) => true,
+            (OrderStatus.Pending or OrderStatus.Preparing, OrderStatus.Cancelled) => true,
+            _ => false,
+        };
     }
 }

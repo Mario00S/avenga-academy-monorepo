@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PizzaApp.Domain.Constants;
 using PizzaApp.Dtos.Orders;
 using PizzaApp.Services.Abstractions;
 
@@ -34,6 +36,13 @@ public class OrdersController : ApiControllerBase
         return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<OrderDto>> Update(int id, UpdateOrderDto request, CancellationToken cancellationToken)
+    {
+        var order = await _orderService.UpdateAsync(id, request, cancellationToken);
+        return Ok(order);
+    }
+
     [HttpPatch("{id:int}/status")]
     public async Task<ActionResult<OrderDto>> ChangeStatus(
         int id,
@@ -42,5 +51,13 @@ public class OrdersController : ApiControllerBase
     {
         var order = await _orderService.ChangeStatusAsync(id, request, cancellationToken);
         return Ok(order);
+    }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _orderService.DeleteAsync(id, cancellationToken);
+        return NoContent();
     }
 }

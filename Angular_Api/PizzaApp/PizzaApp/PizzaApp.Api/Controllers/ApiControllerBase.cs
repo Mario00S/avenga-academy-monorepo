@@ -6,6 +6,6 @@ namespace PizzaApp.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
-public class ApiControllerBase : ControllerBase
+public abstract class ApiControllerBase : ControllerBase
 {
 }

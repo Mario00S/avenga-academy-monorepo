@@ -59,8 +59,23 @@ public class OrderService : IOrderService
         return await GetByIdAsync(order.Id, cancellationToken);
     }
 
-    public Task<OrderDto> UpdateAsync(int id, UpdateOrderDto request, CancellationToken cancellationToken = default) =>
-        throw new NotImplementedException();
+    public async Task<OrderDto> UpdateAsync(int id, UpdateOrderDto request, CancellationToken cancellationToken = default)
+    {
+        var order = await FindOrderAsync(id, cancellationToken);
+        _currentUser.EnsureOwnerOrAdmin(order.UserId);
+
+        if (order.Status != OrderStatus.Pending)
+        {
+            throw new ConflictException($"Only pending orders can be changed. This order is {order.Status}.");
+        }
+
+        _mapper.Map(request, order);
+        order.UpdatedDate = DateTime.UtcNow;
+
+        await _orderRepository.UpdateAsync(order, cancellationToken);
+
+        return _mapper.Map<OrderDto>(order);
+    }
 
     public async Task<OrderDto> ChangeStatusAsync(
         int id,
@@ -83,8 +98,11 @@ public class OrderService : IOrderService
         return _mapper.Map<OrderDto>(order);
     }
 
-    public Task DeleteAsync(int id, CancellationToken cancellationToken = default) =>
-        throw new NotImplementedException();
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var order = await FindOrderAsync(id, cancellationToken);
+        await _orderRepository.DeleteAsync(order, cancellationToken);
+    }
 
     private async Task<Order> FindOrderAsync(int id, CancellationToken cancellationToken = default)
     {
